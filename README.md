@@ -1,127 +1,115 @@
-# Resal Deployment Plugin
+# Resal Marketplace
 
-A Claude Code plugin that automates adding deployment pipeline support for new applications to the Resal GitOps infrastructure.
+A collection of Claude Code plugins for the Resal DevOps and engineering team. Each plugin encodes repeatable workflows and domain knowledge so any team member can execute complex infrastructure tasks consistently.
 
-## What it does
+## Available Plugins
 
-When you need to deploy a new app to dev/staging, this plugin handles the full setup:
-
-- **ECR Repository** - Adds Terraform config for the Docker image registry
-- **Helm Chart** - Creates the complete chart with all 11 templates, values, and config files
-- **ArgoCD Registration** - Registers the app in the app-of-apps for both dev and stage
-- **GitHub Actions** - Creates/fixes CI workflows for build, push, and helm sync
+| Plugin | Description |
+|--------|-------------|
+| [add-app-deployment](plugins/add-app-deployment/) | Add deployment pipeline for new apps (ECR, Helm, ArgoCD, GitHub Actions) |
 
 ## Installation
 
-### Option 1: Install directly from GitHub repo (recommended)
+### Add the marketplace
 
 ```bash
-# Clone the repo and load as a plugin
-git clone https://github.com/ResalApps/resal-deployment-plugin.git
-claude --plugin-dir ./resal-deployment-plugin
+claude marketplace add resal https://raw.githubusercontent.com/ResalApps/resal-marketplace/master/marketplace.json
 ```
 
-Or load it directly in any Claude Code session:
+### Install a plugin
 
 ```bash
-claude --plugin-dir /path/to/resal-deployment-plugin
+# Install to user scope (available in all projects)
+claude plugin install add-app-deployment@resal
+
+# Install to project scope (shared with team via git)
+claude plugin install add-app-deployment@resal --scope project
 ```
 
-### Option 2: Install as a user skill (persistent)
-
-Clone the repo into your Claude Code skills directory so it's always available:
+### Install all plugins
 
 ```bash
-git clone https://github.com/ResalApps/resal-deployment-plugin.git ~/.claude/skills/add-app-deployment
-```
-
-To update later:
-
-```bash
-cd ~/.claude/skills/add-app-deployment && git pull
-```
-
-### Option 3: Install via marketplace
-
-If your team has a Claude Code marketplace configured, add this entry to your `marketplace.json`:
-
-```json
-{
-  "id": "resal-deployment",
-  "name": "Resal Deployment",
-  "description": "Add deployment pipelines for new apps",
-  "version": "1.0.0",
-  "source": {
-    "source": "github",
-    "repo": "ResalApps/resal-deployment-plugin",
-    "path": "."
-  }
-}
-```
-
-Then install:
-
-```bash
-claude plugin install resal-deployment@your-marketplace
+claude plugin install add-app-deployment@resal
 ```
 
 ## Usage
 
-### Automatic trigger
-
-The skill triggers automatically when you say things like:
-
-- "Add deployment for my-new-service"
-- "Deploy a new app to dev and staging"
-- "Onboard payment-gateway to the pipeline"
-- "Set up CI/CD for the new frontend"
-
-### Manual trigger
+Once installed, plugins are available as slash commands:
 
 ```
-/resal-deployment:add-app-deployment
+/add-app-deployment:add-app-deployment
 ```
 
-Or if installed as a standalone skill:
+Or they trigger automatically based on context. For example, saying "deploy a new service to dev and staging" will activate the `add-app-deployment` plugin.
+
+## Development
+
+### Loading a plugin locally for testing
+
+```bash
+claude --plugin-dir ./plugins/add-app-deployment
+```
+
+Use `/reload-plugins` inside Claude Code to pick up changes without restarting.
+
+### Adding a new plugin
+
+1. Create a new directory under `plugins/`:
 
 ```
-/add-app-deployment
-```
-
-### What happens
-
-1. **Gathers info** - Asks you for app name, namespace, ECR path, hostnames, container port, etc.
-2. **Plans** - Generates a checklist of all files to create/modify
-3. **Executes** - Creates the Helm chart, templates, values files, Terraform config, ArgoCD entries, and CI workflows
-4. **Verifies** - Checks all files exist and no stale references remain
-5. **PRs** - Creates branches and pull requests in both the infrastructure and app repos
-
-### Post-merge steps
-
-After PRs are merged:
-
-1. Run `terraform apply` in Terraform Cloud `common-infrastructure` workspace
-2. Push to the app's `develop` branch to trigger the first dev build
-3. ArgoCD auto-syncs the deployment
-
-## Plugin structure
-
-```
-resal-deployment-plugin/
+plugins/my-new-plugin/
 ├── .claude-plugin/
-│   └── plugin.json                              # Plugin manifest
+│   └── plugin.json
 └── skills/
-    └── add-app-deployment/
-        ├── SKILL.md                             # 5-phase workflow
+    └── my-skill/
+        ├── SKILL.md
         └── references/
-            ├── infrastructure-conventions.md     # Repo structure, naming, AWS accounts
-            ├── deployment-checklist.md           # 8-item creation checklist
-            ├── helm-templates.md                 # Helm chart and values templates
-            └── workflow-templates.md             # GitHub Actions workflow templates
 ```
 
-## Requirements
+2. Add `plugin.json` with at minimum:
 
-- Access to the `ResalApps/infrastructure` GitHub repository
-- `gh` CLI authenticated with appropriate permissions
-- `INFRA_REPO_TOKEN` and `COM_AWS_ACCOUNT_ID` secrets configured in the app repo
+```json
+{
+  "name": "my-new-plugin",
+  "description": "What the plugin does",
+  "version": "1.0.0"
+}
+```
+
+3. Add the plugin entry to `marketplace.json`:
+
+```json
+{
+  "id": "my-new-plugin",
+  "name": "My New Plugin",
+  "description": "What the plugin does",
+  "version": "1.0.0",
+  "source": {
+    "source": "github",
+    "repo": "ResalApps/resal-marketplace",
+    "path": "plugins/my-new-plugin"
+  }
+}
+```
+
+4. Test locally, then commit and push.
+
+## Repository structure
+
+```
+resal-marketplace/
+├── marketplace.json                 # Plugin registry
+├── README.md
+└── plugins/
+    └── add-app-deployment/          # First plugin
+        ├── .claude-plugin/
+        │   └── plugin.json
+        └── skills/
+            └── add-app-deployment/
+                ├── SKILL.md
+                └── references/
+                    ├── infrastructure-conventions.md
+                    ├── deployment-checklist.md
+                    ├── helm-templates.md
+                    └── workflow-templates.md
+```

@@ -19,6 +19,23 @@ The infrastructure uses:
 
 See [references/infrastructure-conventions.md](references/infrastructure-conventions.md) for full details on repo structure, naming conventions, and patterns.
 
+## Repository Setup
+
+The infrastructure repo must be available locally to make changes. If it's not already cloned or available as a working directory, clone it:
+
+```bash
+git clone https://github.com/ResalApps/infrastructure.git
+```
+
+- **Infrastructure repo:** `https://github.com/ResalApps/infrastructure.git` (GitHub org: `ResalApps`)
+- **Default branch:** `main`
+- All app repos also live under `https://github.com/ResalApps/`
+
+Before starting, check if the infrastructure repo is already available:
+1. Check if the user has it open as a working directory
+2. Check common local paths (e.g., sibling directories of the current project)
+3. If not found, clone it to a suitable location and inform the user
+
 ## Workflow
 
 ### Phase 1: Gather Information
@@ -69,6 +86,9 @@ After implementation, run these checks:
 ### Phase 5: Commit & PR
 
 Create a branch `feat/add-{app-name}-deployment` in each repo that has changes, commit, and create PRs.
+
+**Infrastructure repo:** Push branch and create PR against `main` at `ResalApps/infrastructure`.
+**App repo:** Push branch and create PR against `main` (or the app's default branch).
 
 **Deployment order after merge:**
 1. Terraform apply in `common-infrastructure` workspace (creates ECR)

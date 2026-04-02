@@ -10,26 +10,16 @@ A collection of Claude Code plugins for the Resal DevOps and engineering team. E
 
 ## Installation
 
-### Add the marketplace
+### Step 1: Add the marketplace
 
-```bash
-claude marketplace add resal https://raw.githubusercontent.com/ResalApps/resal-marketplace/master/marketplace.json
+```
+/plugin marketplace add ResalApps/resal-marketplace
 ```
 
-### Install a plugin
+### Step 2: Install a plugin
 
-```bash
-# Install to user scope (available in all projects)
-claude plugin install add-app-deployment@resal
-
-# Install to project scope (shared with team via git)
-claude plugin install add-app-deployment@resal --scope project
 ```
-
-### Install all plugins
-
-```bash
-claude plugin install add-app-deployment@resal
+/plugin install add-app-deployment@resal
 ```
 
 ## Usage
@@ -76,19 +66,13 @@ plugins/my-new-plugin/
 }
 ```
 
-3. Add the plugin entry to `marketplace.json`:
+3. Add the plugin entry to `.claude-plugin/marketplace.json`:
 
 ```json
 {
-  "id": "my-new-plugin",
-  "name": "My New Plugin",
-  "description": "What the plugin does",
-  "version": "1.0.0",
-  "source": {
-    "source": "github",
-    "repo": "ResalApps/resal-marketplace",
-    "path": "plugins/my-new-plugin"
-  }
+  "name": "my-new-plugin",
+  "source": "./plugins/my-new-plugin",
+  "description": "What the plugin does"
 }
 ```
 
@@ -98,7 +82,8 @@ plugins/my-new-plugin/
 
 ```
 resal-marketplace/
-├── marketplace.json                 # Plugin registry
+├── .claude-plugin/
+│   └── marketplace.json             # Plugin registry
 ├── README.md
 └── plugins/
     └── add-app-deployment/          # First plugin

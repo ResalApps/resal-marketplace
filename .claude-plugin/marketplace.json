@@ -1,0 +1,13 @@
+{
+  "name": "resal",
+  "owner": {
+    "name": "Resal DevOps"
+  },
+  "plugins": [
+    {
+      "name": "add-app-deployment",
+      "source": "./plugins/add-app-deployment",
+      "description": "Add deployment pipeline support for new applications to the Resal GitOps infrastructure (ECR, Helm, ArgoCD, GitHub Actions)"
+    }
+  ]
+}

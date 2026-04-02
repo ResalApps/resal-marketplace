@@ -1,5 +1,25 @@
 # Infrastructure Conventions
 
+## Repositories
+
+| Repo | URL | Purpose |
+|------|-----|---------|
+| Infrastructure | `https://github.com/ResalApps/infrastructure.git` | GitOps: Helm charts, Terraform, ArgoCD config |
+| App repos | `https://github.com/ResalApps/{repo-name}.git` | Application source code + CI workflows |
+
+All repos are in the `ResalApps` GitHub organization. The infrastructure repo default branch is `main`.
+
+To clone the infrastructure repo:
+```bash
+git clone https://github.com/ResalApps/infrastructure.git
+```
+
+The reusable CI workflows in the infrastructure repo are referenced by app repos as:
+```yaml
+uses: ResalApps/infrastructure/.github/workflows/docker-build-push.yaml@main
+uses: ResalApps/infrastructure/.github/workflows/sync-helm-chart.yaml@main
+```
+
 ## Repository Structure
 
 ```

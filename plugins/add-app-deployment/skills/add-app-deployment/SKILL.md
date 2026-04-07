@@ -62,8 +62,7 @@ Use the checklist in [references/deployment-checklist.md](references/deployment-
 ### Phase 3: Execute
 
 For each item in the checklist, use the templates and patterns from:
-- [references/helm-templates.md](references/helm-templates.md) - All Helm template files
-- [references/values-templates.md](references/values-templates.md) - Values and config file templates
+- [references/helm-templates.md](references/helm-templates.md) - Helm templates, values/config file structures, Bitnami image guidance
 - [references/workflow-templates.md](references/workflow-templates.md) - GitHub Actions workflow templates
 
 **Key rules:**
@@ -73,6 +72,10 @@ For each item in the checklist, use the templates and patterns from:
 - ECR image repository format: `882222437772.dkr.ecr.us-east-2.amazonaws.com/{namespace}/{app-name}`
 - Dev 1Password vault: `dev-cluster`, Stage: `stage-cluster`
 - Dev ACM cert ARN (auto-selected): `arn:aws:acm:us-east-2:244122818208:certificate/17a0e0c3-32f5-4718-b66a-88cc06fd7b2c`
+- App repo helm configs go in `helm/{app-name}/config-{env}.yaml` (nested, not flat)
+- Build workflows must always pass `helm_values_file` input
+- Bitnami images: use `bitnamilegacy/` registry (not `bitnami/`) — see helm-templates.md for details
+- Reusable workflows must be referenced as `@main` (not pinned SHA)
 
 ### Phase 4: Verify
 

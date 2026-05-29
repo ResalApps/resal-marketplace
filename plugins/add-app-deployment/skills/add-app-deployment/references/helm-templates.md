@@ -121,7 +121,7 @@ ingress:
 
 postgresql:
   enabled: false
-  # ... standard bitnami postgresql config (include even if disabled)
+  # Include full postgresql config even if disabled — see Bitnami Images section below
 
 onepassword:
   vault: "{ENV}-cluster"  # dev-cluster or stage-cluster
@@ -163,3 +163,52 @@ dependencies:
     repository: https://charts.bitnami.com/bitnami
     version: "^16.7.4"
 ```
+
+## Bitnami Images
+
+Bitnami has migrated many Docker images from `docker.io/bitnami/` to `docker.io/bitnamilegacy/`. When enabling PostgreSQL, Redis, or other Bitnami-based dependencies, always use `bitnamilegacy/` as the image repository.
+
+**Current known `bitnamilegacy` images used across Resal infrastructure:**
+
+| Image | Repository | Example Tag |
+|-------|-----------|-------------|
+| PostgreSQL | `bitnamilegacy/postgresql` | `17.6.0-debian-12-r4` |
+| Redis | `bitnamilegacy/redis` | Check Docker Hub for latest |
+| OS Shell (init container) | `bitnamilegacy/os-shell` | (used for volumePermissions) |
+
+**When enabling PostgreSQL in values-{env}.yaml:**
+
+```yaml
+postgresql:
+  enabled: true
+  global:
+    security:
+      allowInsecureImages: true
+    defaultStorageClass: "gp3"
+    postgresql:
+      service:
+        ports:
+          postgresql: 5432
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/postgresql    # NOT bitnami/postgresql
+    tag: 17.6.0-debian-12-r4
+    pullPolicy: IfNotPresent
+  volumePermissions:
+    image:
+      registry: docker.io
+      repository: bitnamilegacy/os-shell    # NOT bitnami/os-shell
+  auth:
+    enablePostgresUser: false
+    username: "{APP_DB_USER}"
+    database: "{APP_DB_NAME}"
+    onepasswordVault: "{ENV}-cluster"
+    existingSecret: "{APP_NAME}-postgresql"
+    secretKeys:
+      userPasswordKey: "POSTGRES_PASSWORD"
+  primary:
+    persistence:
+      size: 1Gi
+```
+
+> **Always verify:** Before deploying, check Docker Hub to confirm the specific image and tag exists under `bitnamilegacy/`. If a new Bitnami chart version moves the image back to `bitnami/`, update accordingly. The Helm chart repository (`https://charts.bitnami.com/bitnami`) remains unchanged regardless of image registry.

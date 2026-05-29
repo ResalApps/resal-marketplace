@@ -102,21 +102,44 @@ The `app-of-apps/templates/application.yaml` template auto-discovers apps by:
 ## CI/CD Flow
 
 ```
-App Repo push -> GitHub Actions -> Build Docker image -> Trivy scan -> Push to ECR
--> Update helm/config-{env}.yaml with new tag -> Commit back to app repo
--> sync-helm-chart workflow -> Copy helm/ to infrastructure repo -> ArgoCD syncs
+App Repo push (e.g., backend/** on develop)
+  -> GitHub Actions build workflow
+  -> Docker build -> Trivy scan -> Push to ECR
+  -> Update helm/{app-name}/config-{env}.yaml with new image tag
+  -> Commit back to app repo (develop branch)
+  -> Sync workflow triggers on helm config change
+  -> Copies config-*.yaml from helm/{app-name}/ to infrastructure repo
+  -> ArgoCD detects change in infra repo -> syncs deployment
 ```
+
+### App repo helm config structure
+
+App repos use per-component subdirectories under `helm/`:
+```
+{app-repo}/
+└── helm/
+    ├── {app-name-backend}/
+    │   ├── config-dev.yaml
+    │   └── config-stage.yaml
+    └── {app-name-frontend}/
+        ├── config-dev.yaml
+        └── config-stage.yaml
+```
+
+The sync workflow automatically detects this nested structure (`helm/{app_name}/`) and falls back to flat `helm/` for legacy repos.
 
 ## Reusable Workflows
 
 ### docker-build-push.yaml
 
-Inputs: `iam_role_name`, `ecr_repository`, `environment`, `dockerfile_path`, `build-args`
+Inputs: `iam_role_name`, `ecr_repository`, `environment`, `dockerfile_path`, `docker-context`, `build-args`, `helm_values_file`
 Secrets: `aws_account_id` (`COM_AWS_ACCOUNT_ID`), `infra_repo_token` (`INFRA_REPO_TOKEN`)
+
+> **Important:** Always pass `helm_values_file` (e.g., `helm/{app-name}/config-dev.yaml`) to ensure the update job finds the correct config file. Without it, the job falls back to a flat `helm/config-{env}.yaml` path.
 
 ### sync-helm-chart.yaml
 
 Inputs: `app_name`, `repo_name`, `namespace`
 Secrets: `INFRA_REPO_TOKEN`
 
-Auto-commits dev files directly, creates PRs for stage/prod files.
+Auto-commits dev files directly, creates PRs for stage/prod files. Copies only `config-*.yaml` files from the app repo to the infrastructure repo (not subdirectories).

@@ -14,7 +14,8 @@ Documentation for all plugins available in the Resal Claude Code Marketplace.
 | # | Plugin | Description | Docs |
 |---|--------|-------------|------|
 | 1 | **add-app-deployment** | Add deployment pipeline for new apps to the Resal GitOps infrastructure | [View docs](add-app-deployment.md) |
-| 2 | **resal-pm-plugin** | AI-first product management: idea evaluation, PRDs, competitive analysis, stakeholder updates, research, data analysis | [View docs](resal-pm-plugin.md) |
+| 2 | **report-publisher** | Publish generated reports to the Resal Report Portal with public, team login, or PIN protection | [View docs](report-publisher.md) |
+| 3 | **resal-pm-plugin** | AI-first product management: idea evaluation, PRDs, competitive analysis, stakeholder updates, research, data analysis | [View docs](resal-pm-plugin.md) |
 
 ---
 
@@ -34,6 +35,12 @@ Run this inside Claude Code:
 /plugin install add-app-deployment@resal
 ```
 
+For report publishing:
+
+```
+/plugin install report-publisher@resal
+```
+
 ### Step 3: Verify
 
 Run `/reload-plugins` then check the plugin appears in your skill list.
@@ -48,6 +55,12 @@ Plugins can be triggered in two ways:
 
 ```
 /add-app-deployment:add-app-deployment
+```
+
+Report publishing command:
+
+```
+/report-publisher:report-publisher
 ```
 
 ## Contributing

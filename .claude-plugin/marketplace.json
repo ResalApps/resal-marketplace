@@ -10,6 +10,11 @@
       "description": "Add deployment pipeline support for new applications to the Resal GitOps infrastructure (ECR, Helm, ArgoCD, GitHub Actions)"
     },
     {
+      "name": "report-publisher",
+      "source": "./plugins/report-publisher",
+      "description": "Publish generated reports to the Resal Report Portal with public, team login, or PIN protection"
+    },
+    {
       "name": "resal-pm-plugin",
       "source": {
         "source": "github",

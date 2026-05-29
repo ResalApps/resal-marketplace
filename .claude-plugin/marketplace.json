@@ -15,6 +15,11 @@
       "description": "Publish generated reports to the Resal Report Portal with public, team login, or PIN protection"
     },
     {
+      "name": "devtools",
+      "source": "./plugins/devtools",
+      "description": "Developer productivity tools for handling GitHub PR review feedback and related engineering workflows"
+    },
+    {
       "name": "resal-pm-plugin",
       "source": {
         "source": "github",

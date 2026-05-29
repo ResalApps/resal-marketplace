@@ -1,0 +1,9 @@
+{
+  "name": "devtools",
+  "description": "Developer productivity tools for handling GitHub PR review feedback and related engineering workflows",
+  "version": "1.0.0",
+  "author": {
+    "name": "Resal Engineering"
+  },
+  "keywords": ["developer-tools", "github", "pull-request", "code-review", "workflow"]
+}

@@ -1,8 +1,7 @@
 [CmdletBinding()]
 param(
-  [string]$Server,
-  [string]$User,
-  [string]$RemotePath = "/opt/report-portal",
+  [string]$ServerUrl,
+  [string]$ApiKey = $env:MCP_PUBLISH_API_KEY,
   [string]$Source,
   [ValidateSet("public", "team", "pin")][string]$Visibility,
   [Alias("RelativeUrl")][string]$Url,
@@ -15,36 +14,49 @@ param(
   [string]$Category,
   [string]$Tags,
   [string]$AccessUsers,
-  [string]$AccessGroups
+  [string]$AccessGroups,
+  [switch]$Local
 )
 $ErrorActionPreference = "Stop"
-if (-not $Server) { $Server = Read-Host "Server hostname/IP" }
-if (-not $User) { $User = Read-Host "SSH user" }
+$Root = Resolve-Path (Join-Path $PSScriptRoot "..")
+Set-Location $Root
+
+if (-not $ServerUrl) { $ServerUrl = Read-Host "Reports base URL (for example https://reports.example.test)" }
+if (-not $ApiKey) { $ApiKey = Read-Host "MCP publish API key" }
 if (-not $Source) { $Source = Read-Host "Source file/folder" }
 if (-not (Test-Path $Source)) { throw "Source does not exist: $Source" }
 if (-not $Visibility) { $Visibility = Read-Host "Visibility [public/team/pin]" }
 if (-not $Url) { $Url = Read-Host "Relative URL" }
+if ($Visibility -eq "pin" -and -not $Pin) {
+  $secure = Read-Host "PIN/password for this report URL" -AsSecureString
+  $ptr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secure)
+  try { $Pin = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($ptr) }
+  finally { [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($ptr) }
+}
 
-$stamp = Get-Date -Format "yyyyMMdd-HHmmss"
-$archive = Join-Path $env:TEMP "report-$stamp.tar.gz"
 $sourceFull = (Resolve-Path $Source).Path
-$parent = Split-Path $sourceFull -Parent
-$name = Split-Path $sourceFull -Leaf
-$remoteIncoming = "$RemotePath/incoming/remote-$stamp"
+$composeArgs = @("compose", "-f", "docker-compose.yml")
+if ($Local) { $composeArgs += @("-f", "docker-compose.local.yml") }
 
-tar -czf $archive -C $parent $name
-ssh "$User@$Server" "mkdir -p '$remoteIncoming'"
-scp $archive "$User@$Server`:$remoteIncoming/source.tar.gz"
-Remove-Item $archive -Force
-ssh "$User@$Server" "cd '$remoteIncoming' && tar xzf source.tar.gz"
+$pinSha256 = ""
+if ($Visibility -eq "pin" -and $Pin) {
+  $sha = [Security.Cryptography.SHA256]::Create()
+  try {
+    $bytes = [Text.Encoding]::UTF8.GetBytes($Pin)
+    $pinSha256 = (($sha.ComputeHash($bytes) | ForEach-Object { $_.ToString("x2") }) -join "")
+  }
+  finally {
+    $sha.Dispose()
+  }
+}
 
-$remoteSource = "$remoteIncoming/$name"
-$cmd = "cd '$RemotePath' && ./scripts/publish-report.sh --source '$remoteSource' --visibility '$Visibility' --url '$Url' --strategy '$Strategy' --version '$Version' --type '$Type'"
-if ($Title) { $safeTitle = $Title.Replace("'", "'\''"); $cmd += " --title '$safeTitle'" }
-if ($Pin) { $safePin = $Pin.Replace("'", "'\''"); $cmd += " --pin '$safePin'" }
-if ($Keep -ge 0) { $cmd += " --keep '$Keep'" }
-if ($Category) { $safeCategory = $Category.Replace("'", "'\''"); $cmd += " --category '$safeCategory'" }
-if ($Tags) { $safeTags = $Tags.Replace("'", "'\''"); $cmd += " --tags '$safeTags'" }
-if ($AccessUsers) { $safeAccessUsers = $AccessUsers.Replace("'", "'\''"); $cmd += " --access-users '$safeAccessUsers'" }
-if ($AccessGroups) { $safeAccessGroups = $AccessGroups.Replace("'", "'\''"); $cmd += " --access-groups '$safeAccessGroups'" }
-ssh "$User@$Server" $cmd
+$remoteArgs = @("run", "--rm", "-v", "${sourceFull}:/source:ro", "publisher", "remote-publish", "--server-url", $ServerUrl, "--api-key", $ApiKey, "--source", "/source", "--visibility", $Visibility, "--url", $Url, "--strategy", $Strategy, "--version", $Version, "--type", $Type)
+if ($Title) { $remoteArgs += @("--title", $Title) }
+if ($pinSha256) { $remoteArgs += @("--pin-sha256", $pinSha256) }
+if ($Keep -ge 0) { $remoteArgs += @("--keep", [string]$Keep) }
+if ($Category) { $remoteArgs += @("--category", $Category) }
+if ($Tags) { $remoteArgs += @("--tags", $Tags) }
+if ($AccessUsers) { $remoteArgs += @("--access-users", $AccessUsers) }
+if ($AccessGroups) { $remoteArgs += @("--access-groups", $AccessGroups) }
+
+& docker @composeArgs @remoteArgs

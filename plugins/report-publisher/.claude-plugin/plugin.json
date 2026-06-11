@@ -1,9 +1,9 @@
 {
   "name": "report-publisher",
   "description": "Publish, protect, version, categorize, and troubleshoot generated reports on the Resal Report Portal",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": {
     "name": "Resal DevOps"
   },
-  "keywords": ["reports", "publishing", "report-portal", "authelia", "versioning", "pin"]
+  "keywords": ["reports", "publishing", "report-portal", "authelia", "versioning", "pin", "mcp"]
 }

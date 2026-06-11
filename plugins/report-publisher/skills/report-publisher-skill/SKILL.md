@@ -16,15 +16,21 @@ Production admin URL:   https://reports.resal.dev/admin/
 Server path:            /opt/report-portal
 ```
 
+If remote publishing fails with authentication or connection errors, stop and tell the user to verify MCP_PUBLISH_API_KEY, confirm the server URL, and restart mcp-publisher and caddy before retrying.
+
 For this workspace's local test stack, use:
 
 ```text
-Local reports URL: https://reports.abushanab.test
-Local auth URL:    https://auth.abushanab.test
-Admin URL:         https://reports.abushanab.test/admin/
+Local reports URL: https://reports.abushanab.net
+Local auth URL:    https://auth.abushanab.net
+Admin URL:         https://reports.abushanab.net/admin/
 ```
 
-The default reports URL `/` is the public landing page. Users do not need `/public/` to browse public or PIN-protected reports, though individual public report files still live under `/public/...` and PIN reports live under `/pin/...`. Team reports stay hidden unless the signed-in user has access. The landing page, generated indexes, category pages, generated Markdown pages, fallback directory pages, and admin console share the report-card theme, include an `Admin` link, and make retained versions clickable.
+Default to the production portal unless the user explicitly says local/test stack. If the user chooses local, replace every production URL in the command with the local test-stack URLs shown above: reports.abushanab.net and auth.abushanab.net.
+
+The default reports URL `/` is the public landing page. Users do not need `/public/` to browse public or PIN-protected reports, though individual public report files still live under `/public/...` and PIN reports live under `/pin/...`. Team reports stay hidden unless the signed-in user has access. The landing page, generated indexes, category pages, generated Markdown pages, fallback directory pages, and admin console share the Resal-branded theme (resal.me logo, violet palette, sidebar navigation with General/Settings sections), include an `Administration` link, and make retained versions clickable.
+
+If the target URL already exists and the user chooses replace, warn that the previous report will be overwritten and ask for confirmation unless the user explicitly said to replace it.
 
 ## What This Skill Does
 
@@ -49,7 +55,7 @@ It supports:
 - Team access grants by user or group
 - Portal admin management at `/admin/`
 - Publishing locally on the VPS
-- Publishing remotely over SSH/SCP
+- Publishing remotely through the MCP publisher with a bearer API key
 
 ## Bundled Resources
 
@@ -94,8 +100,10 @@ templates/
 
 Prefer the live scripts in `/opt/report-portal/scripts` when publishing on the
 VPS, or the checked-out Report Portal package scripts when publishing from a
-workstation. Use the bundled scripts as reference copies or as files to copy
-into a Report Portal package checkout when the package scripts are missing.
+workstation. Remote publishing requires a full Report Portal package checkout so
+Docker Compose can run the `publisher` tooling container. Use the bundled scripts
+as reference copies or as files to copy into a Report Portal package checkout
+when the package scripts are missing.
 
 ## Required Questions
 
@@ -106,6 +114,8 @@ Before publishing, ask the user for any missing information below.
 Ask:
 
 > What is the local path to the generated report file or folder?
+
+If the source path does not exist, is not a file or directory, or is not a supported report format, stop and ask the user to provide a valid source path before running any publish command.
 
 Examples:
 
@@ -124,15 +134,17 @@ Ask:
 
 Map the answer:
 
-| User answer | Visibility |
-|---|---|
-| public / open / no password | `public` |
-| email/password / login / team / private | `team` |
-| PIN / password link / simple password | `pin` |
+| User answer                             | Visibility |
+| --------------------------------------- | ---------- |
+| public / open / no password             | `public`   |
+| email/password / login / team / private | `team`     |
+| PIN / password link / simple password   | `pin`      |
+
+If the user gives a visibility value other than public, team, or pin, ask them to choose one of the three supported modes and do not guess.
 
 ### 3. Relative URL
 
-Ask:
+Ask for the relative URL path under the chosen visibility root, using the exact base path for the selected mode: public reports use /public/<relative-url>/latest/, team reports use /team/<relative-url>/latest/, and pin reports use /pin/<relative-url>/latest/. Do not use the root landing page unless the user explicitly asks for the home page.
 
 > What relative URL should be used under the visibility path?
 
@@ -161,10 +173,10 @@ Ask:
 
 Map the answer:
 
-| User answer | Strategy |
-|---|---|
-| overwrite / replace / update only latest | `replace` |
-| retain / keep history / version | `versioned` |
+| User answer                              | Strategy    |
+| ---------------------------------------- | ----------- |
+| overwrite / replace / update only latest | `replace`   |
+| retain / keep history / version          | `versioned` |
 
 If unsure, recommend `versioned`.
 
@@ -227,9 +239,7 @@ tags: q2,board,forecast
 
 ### 8. Team Access
 
-If protection mode is Team, ask:
-
-> Which users or groups should be able to access this report?
+If visibility is team and the user does not provide access-users or access-groups, ask for them before publishing. If the user explicitly says to grant access later in /admin/, proceed with the publish but state that access is not yet granted.
 
 Use Authelia usernames and group names. Access can be set at publish time with `--access-users` / `--access-groups`, or later from the admin page:
 
@@ -240,7 +250,7 @@ https://reports.resal.dev/admin/
 Local admin page:
 
 ```text
-https://reports.abushanab.test/admin/
+https://reports.abushanab.net/admin/
 ```
 
 ### 9. Cleanup Older Versions
@@ -256,6 +266,17 @@ keep 5
 ```
 
 If the user does not specify cleanup, use the report's saved retention count. New reports default to 5 retained versions.
+
+## Publishing Workflow
+
+Follow these three stages for every publish request:
+
+1. Gather required inputs (source path, visibility, relative URL, strategy, title, category, tags, access grants, PIN, cleanup).
+2. Choose environment and command template:
+   - If the user names a local stack, use local URLs.
+   - Otherwise use production URLs.
+   - If the user asks for remote publishing, use the MCP wrapper instead of the local scripts.
+3. Run the chosen command with all gathered inputs.
 
 ## Local VPS Publishing Command
 
@@ -369,15 +390,120 @@ powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/publish-report.ps1
   -Local
 ```
 
+## MCP Server Setup
+
+Remote publishing works only when the deployed Report Portal stack exposes the MCP publisher at:
+
+```text
+https://reports.resal.dev/mcp
+```
+
+Setup on the VPS:
+
+1. Open the deployed package:
+
+```bash
+cd /opt/report-portal
+```
+
+2. Add one long random API key to `.env`:
+
+```env
+MCP_PUBLISH_API_KEY=replace-with-a-long-random-secret
+```
+
+If MCP_PUBLISH_API_KEY is missing or invalid, stop and ask the user to configure the key before attempting remote publishing.
+
+Optional settings can stay at their defaults:
+
+```env
+MCP_PUBLISH_STAGE_ROOT=/data/mcp-staging
+MCP_PUBLISH_STAGE_TTL_SECONDS=3600
+MCP_PUBLISH_MAX_UPLOAD_BYTES=104857600
+MCP_PUBLISH_HOST=0.0.0.0
+MCP_PUBLISH_PORT=8090
+```
+
+3. Start or restart the MCP publisher and Caddy:
+
+```bash
+docker compose -f docker-compose.yml up -d mcp-publisher caddy
+```
+
+For local validation:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.local.yml up -d mcp-publisher caddy
+```
+
+4. Verify the authenticated health endpoint:
+
+```bash
+set -a
+. ./.env
+set +a
+curl -fsS \
+  -H "Authorization: Bearer $MCP_PUBLISH_API_KEY" \
+  https://reports.resal.dev/mcp/healthz
+```
+
+Expected result:
+
+```json
+{
+  "status": "ok",
+  "service": "mcp-publisher"
+}
+```
+
+5. Configure the publishing workstation with the same key:
+
+```bash
+export MCP_PUBLISH_API_KEY="same-secret-as-the-server"
+```
+
+PowerShell:
+
+```powershell
+$env:MCP_PUBLISH_API_KEY = "same-secret-as-the-server"
+```
+
+Keep the key outside source control. Rotate it by changing `.env` and restarting `mcp-publisher`.
+
 ## Remote Publishing Command
 
-When publishing from another machine to the VPS:
+When publishing from another machine, use the MCP-backed remote publisher wrappers from a full Report Portal package checkout. The wrappers package the local source, upload it to `/mcp/uploads`, complete the publish through `/mcp/publish`, and authenticate every request with `MCP_PUBLISH_API_KEY`.
+
+Default remote strategy: `versioned`
+Default remote version: `auto`
+
+Current remote wrapper options:
+
+```text
+--server-url / -ServerUrl
+--api-key / -ApiKey
+--source / -Source
+--visibility / -Visibility
+--url / -Url
+--title / -Title
+--strategy / -Strategy
+--version / -Version
+--type / -Type
+--pin / -Pin
+--keep / -Keep
+--category / -Category
+--tags / -Tags
+--access-users / -AccessUsers
+--access-groups / -AccessGroups
+--local / -Local
+```
+
+On Unix-like systems:
 
 ```bash
 ./scripts/remote-publish-report.sh \
-  --server SERVER_HOST_OR_IP \
-  --user SSH_USER \
-  --remote-path /opt/report-portal \
+  --server-url https://reports.resal.dev \
+  --api-key "$MCP_PUBLISH_API_KEY" \
   --source SOURCE_PATH \
   --visibility VISIBILITY \
   --url RELATIVE_URL \
@@ -386,24 +512,33 @@ When publishing from another machine to the VPS:
   --version auto \
   --type auto \
   --category "General" \
-  --tags "optional,tags"
+  --tags "optional,tags" \
+  --access-users "samy,fatima" \
+  --access-groups "admins,finance" \
+  --keep 5
 ```
 
 For PowerShell:
 
 ```powershell
 ./scripts/remote-publish-report.ps1 `
-  -Server SERVER_HOST_OR_IP `
-  -User SSH_USER `
-  -RemotePath /opt/report-portal `
+  -ServerUrl https://reports.resal.dev `
+  -ApiKey $env:MCP_PUBLISH_API_KEY `
   -Source SOURCE_PATH `
   -Visibility VISIBILITY `
   -Url RELATIVE_URL `
   -Title "REPORT_TITLE" `
   -Strategy versioned `
   -Version auto `
-  -Type auto
+  -Type auto `
+  -Category "General" `
+  -Tags "optional,tags" `
+  -AccessUsers "samy,fatima" `
+  -AccessGroups "admins,finance" `
+  -Keep 5
 ```
+
+For PIN-protected reports, pass `--pin` / `-Pin`; the wrapper hashes the value locally and sends only the SHA-256 digest to the MCP publisher.
 
 ## Admin and Access Management
 
@@ -411,7 +546,7 @@ Use the admin page to add portal users, set/reset passwords, assign groups, dele
 
 ```text
 https://reports.resal.dev/admin/
-https://reports.abushanab.test/admin/
+https://reports.abushanab.net/admin/
 ```
 
 Important distinction:
@@ -451,19 +586,19 @@ PowerShell:
 
 Use these defaults unless the user gives different instructions:
 
-| Missing input | Default |
-|---|---|
-| Visibility | Ask; do not assume |
-| Relative URL | Ask; do not invent for production |
-| Strategy | Recommend `versioned` |
-| Version | `auto` |
-| Type | `auto` |
-| Category | `General` |
-| Tags | none |
-| Team access | Ask for users/groups; can also be granted in `/admin/` |
-| Cleanup | Use saved retention count; default for new reports is 5 |
-| PIN | Ask if visibility is `pin` |
-| Report title | Infer from folder/file name if not provided |
+| Missing input | Default                                                 |
+| ------------- | ------------------------------------------------------- |
+| Visibility    | Ask; do not assume                                      |
+| Relative URL  | Ask; do not invent for production                       |
+| Strategy      | Recommend `versioned`                                   |
+| Version       | `auto`                                                  |
+| Type          | `auto`                                                  |
+| Category      | `General`                                               |
+| Tags          | none                                                    |
+| Team access   | Ask for users/groups; can also be granted in `/admin/`  |
+| Cleanup       | Use saved retention count; default for new reports is 5 |
+| PIN           | Ask if visibility is `pin`                              |
+| Report title  | Infer from folder/file name if not provided             |
 
 ## Final Response After Publishing
 

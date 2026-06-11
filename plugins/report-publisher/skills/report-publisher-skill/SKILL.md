@@ -3,7 +3,6 @@ name: report-publisher-skill
 description: Use when publishing, updating, protecting, categorizing, versioning, cleaning, or troubleshooting generated reports on the self-hosted Report Portal.
 ---
 
-
 # Report Publisher Skill
 
 Use this skill whenever the user asks to publish, host, update, replace, version, protect, or clean a generated report on the self-hosted Report Portal.
@@ -537,11 +536,11 @@ For **local stacks**, change the environment:
 
 ### 3. Proxy environment variables
 
-| Variable | Required | Default | Purpose |
-|----------|----------|---------|---------|
-| `MCP_PUBLISH_API_KEY` | Yes | — | Bearer token sent on every HTTP request |
-| `MCP_HOST_HEADER` | No | `reports.resal.dev` | `Host` header for Caddy virtual-host routing |
-| `MCP_SERVER_URL` | No | `https://reports.resal.dev/mcp` | Full URL to the MCP endpoint |
+| Variable              | Required | Default                         | Purpose                                      |
+| --------------------- | -------- | ------------------------------- | -------------------------------------------- |
+| `MCP_PUBLISH_API_KEY` | Yes      | —                               | Bearer token sent on every HTTP request      |
+| `MCP_HOST_HEADER`     | No       | `reports.resal.dev`             | `Host` header for Caddy virtual-host routing |
+| `MCP_SERVER_URL`      | No       | `https://reports.resal.dev/mcp` | Full URL to the MCP endpoint                 |
 
 ### 4. Restart Claude Desktop
 

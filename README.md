@@ -42,6 +42,57 @@ Plugins trigger automatically based on context, or use slash commands:
 /resal-pm-plugin:competitive-brief        # Competitive analysis
 ```
 
+## Spec Kit Extensions
+
+Besides Claude Code plugins, this repo also hosts **Spec Kit extensions** under
+[`extensions/`](extensions/). These hook into the Spec Kit (`specify`) workflow rather than the
+Claude Code `/plugin` system. Full guide: [`extensions/README.md`](extensions/README.md).
+
+| Extension | ID | Command | What it does |
+|-----------|----|---------|--------------|
+| Detailed PR Generator | `pr` | `/speckit-pr-generate` | Generates a **CHANGELOG** + plain-English **feature-details** doc, then creates/updates the PR description under "What have been developed and how to review it". |
+
+### Install (requires the `specify` CLI and a `.specify/` project)
+
+**By name, via the catalog** — add the catalog once, then install:
+
+```bash
+specify extension catalog add resal \
+  https://raw.githubusercontent.com/ResalApps/resal-marketplace/master/extensions/catalog.json
+specify extension add pr
+```
+
+> By-name (and `--from`) installs need a published release ZIP. Until one is cut, use the local dev
+> install below.
+
+**Local dev install from a clone** (works today, no release needed):
+
+```bash
+git clone https://github.com/ResalApps/resal-marketplace
+# from inside your Spec Kit project:
+specify extension add --dev /path/to/resal-marketplace/extensions/pr
+```
+
+> ⚠️ Point `--dev` at the **external clone** path — never at a path inside your project's own
+> `.specify/extensions/` (the CLI deletes the destination before copying, which would wipe the source).
+
+### Use the `pr` extension
+
+After install the command is available as `/speckit-pr-generate`:
+
+```bash
+/speckit-pr-generate                 # write docs + create/update the PR description
+/speckit-pr-generate --no-pr         # generate/refresh docs only
+/speckit-pr-generate --create-pr     # also create the PR if none exists
+/speckit-pr-generate --feature specs/006-finance-settlement-ledger   # override feature detection
+```
+
+It also registers an **optional** `after_implement` hook, so Spec Kit can prompt to run it
+automatically once implementation finishes. It writes `docs/<feature>/CHANGELOG.md` and
+`docs/<feature>/<Feature>-Explained.md`, then injects the feature-details into the PR body under a
+marker-delimited section — **idempotent**, so re-running refreshes rather than duplicates. The same
+capability is available as the `/devtools:speckit-pr-generate` plugin skill for use outside Spec Kit.
+
 ## Documentation
 
 Full documentation for each plugin is in the [docs/](docs/) folder:

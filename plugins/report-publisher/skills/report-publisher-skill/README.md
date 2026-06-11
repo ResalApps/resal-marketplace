@@ -274,7 +274,7 @@ skills/report-publisher-skill/
 ## Current Portal Behavior
 
 - `https://reports.resal.dev/` is the public landing page; users do not need `/public/` to browse public or PIN-protected reports.
-- The landing page, generated index/category pages, generated Markdown pages, fallback directory pages, and admin console share the report-card theme with a visible `Admin` link and clickable retained-version links.
+- The landing page, generated index/category pages, generated Markdown pages, fallback directory pages, and admin console share the Resal-branded theme (resal.me logo, violet palette, sidebar navigation) with a visible `Administration` link and clickable retained-version links.
 - `https://reports.resal.dev/admin/` is the admin console for portal users, passwords, groups, report grants, user deletion, and password resets.
 - Admin user/group and report-access forms use multi-select dropdowns; report rows have an `Edit Access` modal.
 - Team reports require Authelia login plus a matching portal user or group grant, and stay hidden from users without access.

@@ -16,15 +16,21 @@ Production admin URL:   https://reports.resal.dev/admin/
 Server path:            /opt/report-portal
 ```
 
+If remote publishing fails with authentication or connection errors, stop and tell the user to verify MCP_PUBLISH_API_KEY, confirm the server URL, and restart mcp-publisher and caddy before retrying.
+
 For this workspace's local test stack, use:
 
 ```text
-Local reports URL: https://reports.abushanab.test
-Local auth URL:    https://auth.abushanab.test
-Admin URL:         https://reports.abushanab.test/admin/
+Local reports URL: https://reports.abushanab.net
+Local auth URL:    https://auth.abushanab.net
+Admin URL:         https://reports.abushanab.net/admin/
 ```
 
-The default reports URL `/` is the public landing page. Users do not need `/public/` to browse public or PIN-protected reports, though individual public report files still live under `/public/...` and PIN reports live under `/pin/...`. Team reports stay hidden unless the signed-in user has access. The landing page, generated indexes, category pages, generated Markdown pages, fallback directory pages, and admin console share the report-card theme, include an `Admin` link, and make retained versions clickable.
+Default to the production portal unless the user explicitly says local/test stack. If the user chooses local, replace every production URL in the command with the local test-stack URLs shown above: reports.abushanab.net and auth.abushanab.net.
+
+The default reports URL `/` is the public landing page. Users do not need `/public/` to browse public or PIN-protected reports, though individual public report files still live under `/public/...` and PIN reports live under `/pin/...`. Team reports stay hidden unless the signed-in user has access. The landing page, generated indexes, category pages, generated Markdown pages, fallback directory pages, and admin console share the Resal-branded theme (resal.me logo, violet palette, sidebar navigation with General/Settings sections), include an `Administration` link, and make retained versions clickable.
+
+If the target URL already exists and the user chooses replace, warn that the previous report will be overwritten and ask for confirmation unless the user explicitly said to replace it.
 
 ## What This Skill Does
 
@@ -109,6 +115,8 @@ Ask:
 
 > What is the local path to the generated report file or folder?
 
+If the source path does not exist, is not a file or directory, or is not a supported report format, stop and ask the user to provide a valid source path before running any publish command.
+
 Examples:
 
 ```text
@@ -126,15 +134,17 @@ Ask:
 
 Map the answer:
 
-| User answer | Visibility |
-|---|---|
-| public / open / no password | `public` |
-| email/password / login / team / private | `team` |
-| PIN / password link / simple password | `pin` |
+| User answer                             | Visibility |
+| --------------------------------------- | ---------- |
+| public / open / no password             | `public`   |
+| email/password / login / team / private | `team`     |
+| PIN / password link / simple password   | `pin`      |
+
+If the user gives a visibility value other than public, team, or pin, ask them to choose one of the three supported modes and do not guess.
 
 ### 3. Relative URL
 
-Ask:
+Ask for the relative URL path under the chosen visibility root, using the exact base path for the selected mode: public reports use /public/<relative-url>/latest/, team reports use /team/<relative-url>/latest/, and pin reports use /pin/<relative-url>/latest/. Do not use the root landing page unless the user explicitly asks for the home page.
 
 > What relative URL should be used under the visibility path?
 
@@ -163,10 +173,10 @@ Ask:
 
 Map the answer:
 
-| User answer | Strategy |
-|---|---|
-| overwrite / replace / update only latest | `replace` |
-| retain / keep history / version | `versioned` |
+| User answer                              | Strategy    |
+| ---------------------------------------- | ----------- |
+| overwrite / replace / update only latest | `replace`   |
+| retain / keep history / version          | `versioned` |
 
 If unsure, recommend `versioned`.
 
@@ -229,9 +239,7 @@ tags: q2,board,forecast
 
 ### 8. Team Access
 
-If protection mode is Team, ask:
-
-> Which users or groups should be able to access this report?
+If visibility is team and the user does not provide access-users or access-groups, ask for them before publishing. If the user explicitly says to grant access later in /admin/, proceed with the publish but state that access is not yet granted.
 
 Use Authelia usernames and group names. Access can be set at publish time with `--access-users` / `--access-groups`, or later from the admin page:
 
@@ -242,7 +250,7 @@ https://reports.resal.dev/admin/
 Local admin page:
 
 ```text
-https://reports.abushanab.test/admin/
+https://reports.abushanab.net/admin/
 ```
 
 ### 9. Cleanup Older Versions
@@ -258,6 +266,17 @@ keep 5
 ```
 
 If the user does not specify cleanup, use the report's saved retention count. New reports default to 5 retained versions.
+
+## Publishing Workflow
+
+Follow these three stages for every publish request:
+
+1. Gather required inputs (source path, visibility, relative URL, strategy, title, category, tags, access grants, PIN, cleanup).
+2. Choose environment and command template:
+   - If the user names a local stack, use local URLs.
+   - Otherwise use production URLs.
+   - If the user asks for remote publishing, use the MCP wrapper instead of the local scripts.
+3. Run the chosen command with all gathered inputs.
 
 ## Local VPS Publishing Command
 
@@ -393,6 +412,8 @@ cd /opt/report-portal
 MCP_PUBLISH_API_KEY=replace-with-a-long-random-secret
 ```
 
+If MCP_PUBLISH_API_KEY is missing or invalid, stop and ask the user to configure the key before attempting remote publishing.
+
 Optional settings can stay at their defaults:
 
 ```env
@@ -525,7 +546,7 @@ Use the admin page to add portal users, set/reset passwords, assign groups, dele
 
 ```text
 https://reports.resal.dev/admin/
-https://reports.abushanab.test/admin/
+https://reports.abushanab.net/admin/
 ```
 
 Important distinction:
@@ -565,19 +586,19 @@ PowerShell:
 
 Use these defaults unless the user gives different instructions:
 
-| Missing input | Default |
-|---|---|
-| Visibility | Ask; do not assume |
-| Relative URL | Ask; do not invent for production |
-| Strategy | Recommend `versioned` |
-| Version | `auto` |
-| Type | `auto` |
-| Category | `General` |
-| Tags | none |
-| Team access | Ask for users/groups; can also be granted in `/admin/` |
-| Cleanup | Use saved retention count; default for new reports is 5 |
-| PIN | Ask if visibility is `pin` |
-| Report title | Infer from folder/file name if not provided |
+| Missing input | Default                                                 |
+| ------------- | ------------------------------------------------------- |
+| Visibility    | Ask; do not assume                                      |
+| Relative URL  | Ask; do not invent for production                       |
+| Strategy      | Recommend `versioned`                                   |
+| Version       | `auto`                                                  |
+| Type          | `auto`                                                  |
+| Category      | `General`                                               |
+| Tags          | none                                                    |
+| Team access   | Ask for users/groups; can also be granted in `/admin/`  |
+| Cleanup       | Use saved retention count; default for new reports is 5 |
+| PIN           | Ask if visibility is `pin`                              |
+| Report title  | Infer from folder/file name if not provided             |
 
 ## Final Response After Publishing
 

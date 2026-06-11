@@ -6,7 +6,7 @@ extension:
   version: "1.0.0"
   description: "Generate a feature CHANGELOG and a plain-English feature-details document from Spec Kit artifacts, then create or update the pull request description with the feature details under a review heading."
   author: "Samy K. Abushanab"
-  repository: ""
+  repository: "https://github.com/ResalApps/resal-marketplace"
   license: MIT
 
 requires:

@@ -26,7 +26,7 @@ rm -f "$OUT/$ID.zip"
 
 # Zip from the extensions/ dir so the archive root is `<id>/...`
 ( cd "$ROOT/extensions" && zip -r -q "$OUT/$ID.zip" "$ID" \
-    -x "$ID/.specify-dev/*" -x "$ID/.specify/*" )
+    -x "$ID/.specify-dev*" -x "$ID/.specify*" )
 
 echo "Built $OUT/$ID.zip"
 unzip -l "$OUT/$ID.zip"

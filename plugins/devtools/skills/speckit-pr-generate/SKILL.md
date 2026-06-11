@@ -126,7 +126,7 @@ Run this as a numbered algorithm:
    Title Case. If no feature title can be sourced from the spec or branch, derive the title from
    the feature slug in Title Case and ask the user to confirm it before creating the PR. With
    `--create-pr`, create it immediately (`gh pr create --base <default-branch> --head <branch>
---title "<feature title>" --body-file <tmpfile>`); otherwise **ask** whether to create it now. If
+   --title "<feature title>" --body-file <tmpfile>`); otherwise **ask** whether to create it now. If
    the user declines, write docs only and tell the user to re-run once the PR exists. If
    `gh pr create` fails, report the failure, keep the generated docs, and do not retry silently.
 

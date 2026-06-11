@@ -8,6 +8,7 @@ Developer productivity tools for Resal engineering workflows.
 - [Skills](#skills)
   - [pr-review](#pr-review)
   - [resal-standards-review](#resal-standards-review)
+  - [speckit-pr-generate](#speckit-pr-generate)
 - [Installation](#installation)
 - [How to Use](#how-to-use)
 - [Workflow](#workflow)
@@ -21,10 +22,10 @@ Developer productivity tools for Resal engineering workflows.
 | | |
 |---|---|
 | **Plugin name** | `devtools` |
-| **Bundled skills** | 2 |
-| **Skill names** | `pr-review`, `resal-standards-review` |
-| **Slash commands** | `/devtools:pr-review`, `/devtools:resal-standards-review` |
-| **Triggers on** | "address PR comments", "process review feedback", "resolve PR threads"; "review against Resal standards", "compliance report", "standards audit", "gaps report", "remediation plan" |
+| **Bundled skills** | 3 |
+| **Skill names** | `pr-review`, `resal-standards-review`, `speckit-pr-generate` |
+| **Slash commands** | `/devtools:pr-review`, `/devtools:resal-standards-review`, `/devtools:speckit-pr-generate` |
+| **Triggers on** | "address PR comments", "process review feedback", "resolve PR threads"; "review against Resal standards", "compliance report", "standards audit", "gaps report", "remediation plan"; "generate a detailed PR", "write the PR description", "document this feature for review" |
 
 ## Skills
 
@@ -52,6 +53,30 @@ Findings are rated **critical / high / medium / nice-to-have**. Two modes:
 
 The full prose standards (`core.md` + per-stack files) are bundled under `skills/resal-standards-review/standards/`; the skill's `checks-*.md` catalogs are self-sufficient even without them. The skill never edits target code — the remedy plan is a written plan unless you explicitly ask it to execute.
 
+### speckit-pr-generate
+
+Wraps up a finished feature by producing two reviewer-facing documents and filling in the pull
+request description. It writes:
+
+- `docs/<feature-slug>/CHANGELOG.md` — a technical, Keep-a-Changelog-style record of what shipped.
+- `docs/<feature-slug>/<Feature>-Explained.md` — a plain-English, product-manager-friendly narrative
+  of the feature (its purpose, the scenarios it supports with concrete examples, and Mermaid diagrams).
+
+It then creates or updates the PR for the current branch, injecting the feature-details narrative
+under the heading **"What have been developed and how to review it"** between idempotency markers, so
+re-running refreshes the section instead of duplicating it.
+
+| Behavior | Detail |
+|---|---|
+| **Feature detection** | Reads `.specify/feature.json` in Spec Kit projects; falls back to the git branch / a `docs\|specs` folder elsewhere, and asks if ambiguous. |
+| **PR handling** | Updates an existing PR; offers to create one (`--create-pr` to skip the prompt). `--no-pr` writes docs only. |
+| **Grounding** | Reads `spec.md`/`plan.md`/`data-model.md`/`tasks.md`/`git log`; never fabricates test counts, coverage, or issue numbers. |
+| **Idempotent** | Fixed doc paths + marker-delimited PR section converge on re-run. |
+
+This skill is the **portable twin of the `pr` Spec Kit extension** hosted in
+[`extensions/pr/`](../extensions/) — same name, same behavior. Use the **extension** to wire it into
+the Spec Kit `after_implement` lifecycle; use the **skill** for the slash command anywhere.
+
 ## Installation
 
 Run this inside Claude Code:
@@ -74,12 +99,18 @@ Automatic trigger examples:
 | "Review this service against the Resal standards" | resal-standards-review |
 | "Run a compliance and gaps report on ./ResalPay (report only)" | resal-standards-review |
 | "Audit this app against our coding standards and give me a remediation plan" | resal-standards-review |
+| "Generate a detailed PR for this feature" | speckit-pr-generate |
+| "Write the PR description and a changelog for this branch" | speckit-pr-generate |
+| "Document this feature for review" | speckit-pr-generate |
 
 Manual commands:
 
 ```
 /devtools:pr-review ResalApps/example-repo#123
 /devtools:resal-standards-review
+/devtools:speckit-pr-generate
+/devtools:speckit-pr-generate --no-pr        # docs only
+/devtools:speckit-pr-generate --create-pr    # also create the PR if none exists
 ```
 
 ## Workflow
@@ -102,16 +133,21 @@ plugins/devtools/
     +-- pr-review/
     |   +-- SKILL.md
     +-- resal-standards-review/
+    |   +-- SKILL.md
+    |   +-- checks-core.md
+    |   +-- checks-python.md
+    |   +-- checks-dotnet.md
+    |   +-- checks-react-web.md
+    |   +-- checks-react-native.md
+    |   +-- report-template.md
+    |   +-- remedy-plan-template.md
+    |   +-- standards/         (bundled prose: core + per-stack)
+    +-- speckit-pr-generate/
         +-- SKILL.md
-        +-- checks-core.md
-        +-- checks-python.md
-        +-- checks-dotnet.md
-        +-- checks-react-web.md
-        +-- checks-react-native.md
-        +-- report-template.md
-        +-- remedy-plan-template.md
-        +-- standards/         (bundled prose: core + per-stack)
 ```
+
+> The `speckit-pr-generate` skill is mirrored as the **`pr` Spec Kit extension** under
+> [`extensions/pr/`](../extensions/) (installed with the `specify` CLI, not `/plugin`).
 
 ## Example Session
 

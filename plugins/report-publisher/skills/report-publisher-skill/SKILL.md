@@ -1,5 +1,5 @@
 ---
-name: report-publisher
+name: report-publisher-skill
 description: Use when publishing, updating, protecting, categorizing, versioning, cleaning, or troubleshooting generated reports on the self-hosted Report Portal.
 ---
 
@@ -92,6 +92,7 @@ scripts/
   stop.ps1
   stop-local.sh
   stop-local.ps1
+  mcp-sse-proxy.js          ← MCP stdio-to-Streamable-HTTP proxy for Claude Desktop
 templates/
   AGENTS.md
   CLAUDE.md
@@ -469,6 +470,89 @@ $env:MCP_PUBLISH_API_KEY = "same-secret-as-the-server"
 ```
 
 Keep the key outside source control. Rotate it by changing `.env` and restarting `mcp-publisher`.
+
+## Claude Desktop MCP Integration
+
+The bundled `mcp-sse-proxy.js` bridges Claude Desktop (stdio JSON-RPC) to the Report Portal MCP server (Streamable HTTP). It is a zero-dependency Node.js script that handles session ID capture, Bearer token authentication, and streaming SSE responses.
+
+### 1. Find the Claude Desktop config file
+
+- **Windows Store install** (most common):
+  ```text
+  %LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude_desktop_config.json
+  ```
+- **Standard Windows install**:
+  ```text
+  %APPDATA%\Claude\claude_desktop_config.json
+  ```
+- **macOS**:
+  ```text
+  ~/Library/Application Support/Claude/claude_desktop_config.json
+  ```
+- **Linux**:
+  ```text
+  ~/.config/Claude/claude_desktop_config.json
+  ```
+
+### 2. Add the MCP server entry
+
+Edit `claude_desktop_config.json` and add the `report-portal` server inside the `mcpServers` object:
+
+```json
+{
+  "mcpServers": {
+    "report-portal": {
+      "command": "node",
+      "args": [
+        "C:\\path\\to\\report-publisher-skill\\scripts\\mcp-sse-proxy.js"
+      ],
+      "env": {
+        "MCP_PUBLISH_API_KEY": "same-secret-as-the-server",
+        "MCP_HOST_HEADER": "reports.resal.dev"
+      }
+    }
+  }
+}
+```
+
+For **local stacks**, change the environment:
+
+```json
+{
+  "mcpServers": {
+    "report-portal-local": {
+      "command": "node",
+      "args": [
+        "C:\\path\\to\\report-publisher-skill\\scripts\\mcp-sse-proxy.js"
+      ],
+      "env": {
+        "MCP_PUBLISH_API_KEY": "local-dev-key",
+        "MCP_HOST_HEADER": "reports.abushanab.net"
+      }
+    }
+  }
+}
+```
+
+### 3. Proxy environment variables
+
+| Variable              | Required | Default                         | Purpose                                      |
+| --------------------- | -------- | ------------------------------- | -------------------------------------------- |
+| `MCP_PUBLISH_API_KEY` | Yes      | —                               | Bearer token sent on every HTTP request      |
+| `MCP_HOST_HEADER`     | No       | `reports.resal.dev`             | `Host` header for Caddy virtual-host routing |
+| `MCP_SERVER_URL`      | No       | `https://reports.resal.dev/mcp` | Full URL to the MCP endpoint                 |
+
+### 4. Restart Claude Desktop
+
+After saving the config, fully quit and reopen Claude Desktop. The MCP tools will appear in the chat input as a hammer icon.
+
+### 5. Verify the connection
+
+In Claude Desktop, ask:
+
+> List the available MCP tools.
+
+You should see `publish_report`, `list_reports`, `get_report`, `delete_report`, and `health_check`.
 
 ## Remote Publishing Command
 

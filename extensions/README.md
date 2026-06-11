@@ -1,0 +1,85 @@
+# Spec Kit Extensions
+
+Spec Kit (`specify`) extensions hosted by the Resal Marketplace. These hook into the Spec Kit
+lifecycle (`/speckit.*` workflow) — distinct from the Claude Code **plugins** under
+[`plugins/`](../plugins/), which provide skills/slash-commands.
+
+| Extension | ID | Command | Description |
+|-----------|----|---------|-------------|
+| Detailed PR Generator | `pr` | `/speckit-pr-generate` | Generate a feature **CHANGELOG** + plain-English **feature-details** doc, then create/update the PR description under "What have been developed and how to review it". Optional `after_implement` hook. |
+
+## Installing an extension
+
+You need the `specify` CLI and a Spec Kit project (a `.specify/` directory).
+
+### Option A — by name, via the catalog (recommended)
+
+1. Add this repo's extension catalog to your project (or user) config
+   `.specify/extension-catalogs.yml`:
+
+   ```yaml
+   catalogs:
+     - name: resal
+       url: https://raw.githubusercontent.com/ResalApps/resal-marketplace/master/extensions/catalog.json
+       priority: 1
+       install_allowed: true
+       description: Resal-hosted Spec Kit extensions
+   ```
+
+   …or add it with the CLI:
+
+   ```bash
+   specify extension catalog add resal \
+     https://raw.githubusercontent.com/ResalApps/resal-marketplace/master/extensions/catalog.json
+   ```
+
+2. Install:
+
+   ```bash
+   specify extension add pr
+   ```
+
+   > Requires a published release ZIP (see *Publishing* below). Until a release is cut, use Option B.
+
+### Option B — local dev install from a clone (works today)
+
+Clone this repo, then point `--dev` at the extension directory (an **external** path, not inside the
+target project's `.specify/extensions/`):
+
+```bash
+git clone https://github.com/ResalApps/resal-marketplace
+cd <your-spec-kit-project>
+specify extension add --dev /path/to/resal-marketplace/extensions/pr
+```
+
+> ⚠️ Never run `specify extension add --dev` against a path that is already inside the target
+> project's `.specify/extensions/` — the CLI deletes the destination before copying, which wipes the
+> source when source == destination. Always install from an external clone path.
+
+### Option C — from a release ZIP URL
+
+```bash
+specify extension add --from https://github.com/ResalApps/resal-marketplace/releases/download/pr-v1.0.0/pr.zip
+```
+
+## Using the `pr` extension
+
+After install, the command is available as `/speckit-pr-generate`. It registers an **optional**
+`after_implement` hook (Spec Kit prompts before running it), and can be run manually anytime —
+typically once the PR exists, to inject the feature-details into its description. See
+[`pr/README.md`](pr/README.md).
+
+## Publishing (maintainers)
+
+By-name and `--from` installs need a release ZIP whose archive contains `pr/extension.yml`:
+
+```bash
+extensions/scripts/package.sh pr           # builds dist/pr.zip
+gh release create pr-v1.0.0 dist/pr.zip \
+  --title "pr extension v1.0.0" \
+  --notes "Detailed PR Generator extension v1.0.0"
+```
+
+The release tag (`pr-v1.0.0`) and asset name (`pr.zip`) must match the `download_url` in
+[`catalog.json`](catalog.json). Bump the version in `pr/extension.yml`, `pr/CHANGELOG.md`, and
+`catalog.json` together, then cut a new release.

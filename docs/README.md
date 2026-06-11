@@ -16,7 +16,7 @@ Documentation for all plugins available in the Resal Claude Code Marketplace.
 |---|--------|-------------|--------|------|
 | 1 | **add-app-deployment** | Add deployment pipelines for new apps to the Resal GitOps infrastructure | 1 skill | [View docs](add-app-deployment.md) |
 | 2 | **report-publisher** | Publish generated reports to the Resal Report Portal with public, team login, or PIN protection | 1 skill | [View docs](report-publisher.md) |
-| 3 | **devtools** | Developer productivity tools for handling GitHub PR review feedback and related engineering workflows | 1 skill | [View docs](devtools.md) |
+| 3 | **devtools** | Developer productivity tools: PR review feedback, multi-stack coding-standards review, and detailed PR/changelog + feature-details generation | 3 skills | [View docs](devtools.md) |
 | 4 | **resal-pm-plugin** | AI-first product management: idea evaluation, PRDs, competitive analysis, stakeholder updates, research, data analysis | 8 skills, 1 command | [View docs](resal-pm-plugin.md) |
 
 ---
@@ -55,6 +55,7 @@ Plugins can be triggered in two ways:
 | "Deploy a new service to dev and staging" | add-app-deployment |
 | "Publish this generated report to reports.resal.dev as a PIN report" | report-publisher |
 | "Address the review comments on ResalApps/example#123" | devtools (pr-review) |
+| "Generate a detailed PR / write the PR description for this feature" | devtools (speckit-pr-generate) |
 | "I have an idea for a new feature" | resal-pm-plugin (evaluate-idea) |
 | "Write a PRD for the subscription system" | resal-pm-plugin (write-spec) |
 | "What are our competitors doing?" | resal-pm-plugin (competitive-brief) |
@@ -68,6 +69,8 @@ Plugins can be triggered in two ways:
 | `/add-app-deployment:add-app-deployment` | Deploy a new app to dev/staging |
 | `/report-publisher:report-publisher` | Publish a generated report |
 | `/devtools:pr-review` | Process PR review feedback |
+| `/devtools:resal-standards-review` | Audit a project against Resal standards |
+| `/devtools:speckit-pr-generate` | Generate CHANGELOG + feature-details doc and fill the PR description |
 | `/resal-pm-plugin:evaluate-idea` | Evaluate a product idea |
 | `/resal-pm-plugin:write-spec` | Write a PRD |
 | `/resal-pm-plugin:prd-to-spec` | Decompose PRD into technical specs |

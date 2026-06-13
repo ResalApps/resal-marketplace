@@ -12,7 +12,7 @@ lifecycle (`/speckit.*` workflow) — distinct from the Claude Code **plugins** 
 
 You need the `specify` CLI and a Spec Kit project (a `.specify/` directory).
 
-### Option A — by name, via the catalog (recommended)
+### Option A — by name, via the catalog
 
 1. Add this repo's extension catalog to your project (or user) config
    `.specify/extension-catalogs.yml`:
@@ -29,7 +29,8 @@ You need the `specify` CLI and a Spec Kit project (a `.specify/` directory).
    …or add it with the CLI:
 
    ```bash
-   specify extension catalog add resal \
+   specify extension catalog add --name resal --priority 1 --install-allowed \
+     --description "Resal-hosted Spec Kit extensions" \
      https://raw.githubusercontent.com/ResalApps/resal-marketplace/master/extensions/catalog.json
    ```
 
@@ -39,7 +40,10 @@ You need the `specify` CLI and a Spec Kit project (a `.specify/` directory).
    specify extension add pr
    ```
 
-   > Requires a published release ZIP (see *Publishing* below). Until a release is cut, use Option B.
+   > Requires both a catalog URL that `specify` can fetch over unauthenticated HTTPS and a
+   > published release ZIP (see *Publishing* below). Private GitHub repositories return 404 from
+   > `raw.githubusercontent.com` to unauthenticated callers, so use Option B until the catalog and
+   > release asset are publicly reachable.
 
 ### Option B — local dev install from a clone (works today)
 
@@ -50,6 +54,12 @@ target project's `.specify/extensions/`):
 git clone https://github.com/ResalApps/resal-marketplace
 cd <your-spec-kit-project>
 specify extension add --dev /path/to/resal-marketplace/extensions/pr
+```
+
+PowerShell example from a local Windows clone:
+
+```powershell
+specify extension add --dev "D:\Projects\Resal\resal-marketplace\extensions\pr"
 ```
 
 > ⚠️ Never run `specify extension add --dev` against a path that is already inside the target

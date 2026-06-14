@@ -624,6 +624,24 @@ For PowerShell:
 
 For PIN-protected reports, pass `--pin` / `-Pin`; the wrapper hashes the value locally and sends only the SHA-256 digest to the MCP publisher.
 
+When connected as a direct MCP connector to `https://reports.resal.dev/mcp`, choose the publish path by report size and shape:
+
+- **Small single HTML/Markdown report (≤ ~256 KB):** use the MCP tool `publish_report_content` with the content inline. No shell needed.
+- **A folder/bundle, or anything larger than ~256 KB:** do NOT send the bytes through the MCP tool call (it consumes the model context and fails on large files). Instead use the out-of-band upload-ticket flow:
+  1. Call the MCP tool `create_upload_ticket` (no arguments). It returns `upload_url`, `upload_token`, `expires_at`, and `max_bytes`.
+  2. Package the report locally and upload it directly with `curl` (the bytes never enter the conversation):
+     ```bash
+     tar -czf report.tar.gz -C ./REPORT_DIR .
+     curl -fsS -H "Authorization: Bearer UPLOAD_TOKEN" \
+          -H "Content-Type: application/gzip" \
+          -H "X-Report-Source-Name: report.tar.gz" \
+          --data-binary @report.tar.gz UPLOAD_URL
+     ```
+     The response is JSON containing a `staging_id`. The ticket is single-use and expires at `expires_at`; if it expires, call `create_upload_ticket` again.
+  3. Call the MCP tool `publish_report` with that `staging_id` plus `visibility`, `url`, `strategy`, and any metadata. Do not guess a `staging_id`.
+
+For a single-file report you can also `tar`/`zip` it and use the same ticket flow. The legacy `stage_report_archive` (base64 inline) tool still exists for very small archives, but prefer the upload-ticket flow for anything non-trivial — base64 inline is what blows up on large reports. To remove a published report through MCP, call `delete_report` with `visibility` and relative `url`; the OAuth token must identify a report publisher or admin in its role/group claims.
+
 ## Admin and Access Management
 
 Use the admin page to add portal users, set/reset passwords, assign groups, delete users, and manage report grants:

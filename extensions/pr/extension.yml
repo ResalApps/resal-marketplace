@@ -3,7 +3,7 @@ schema_version: "1.0"
 extension:
   id: pr
   name: "Detailed PR Generator"
-  version: "1.0.1"
+  version: "1.0.2"
   description: "Generate a feature CHANGELOG and a plain-English feature-details document from Spec Kit artifacts, then create or update the pull request description with the feature details under a review heading."
   author: "Samy K. Abushanab"
   repository: "https://github.com/ResalApps/resal-marketplace"

@@ -4,12 +4,12 @@ A collection of Claude Code plugins for the Resal engineering and product teams.
 
 ## Available Plugins
 
-| Plugin | Description | Skills | Source |
-|--------|-------------|--------|--------|
-| [add-app-deployment](docs/add-app-deployment.md) | Add deployment pipelines for new apps (ECR, Helm, ArgoCD, GitHub Actions) | 1 skill | Local |
-| [report-publisher](docs/report-publisher.md) | Publish generated reports to the Resal Report Portal with public, team login, or PIN protection | 1 skill | Local |
-| [devtools](docs/devtools.md) | Developer productivity tools: PR review feedback, multi-stack coding-standards review, and detailed PR/changelog + feature-details generation | 3 skills | Local |
-| [resal-pm-plugin](docs/resal-pm-plugin.md) | AI-first product management: idea evaluation, PRDs, competitive analysis, stakeholder updates, research, data analysis | 8 skills, 1 command | [AI_Workflow](https://github.com/ResalApps/AI_Workflow) |
+| Plugin                                           | Description                                                                                                                                   | Skills              | Source                                                  |
+| ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- | ------------------------------------------------------- |
+| [add-app-deployment](docs/add-app-deployment.md) | Add deployment pipelines for new apps (ECR, Helm, ArgoCD, GitHub Actions)                                                                     | 1 skill             | Local                                                   |
+| [report-publisher](docs/report-publisher.md)     | Publish generated reports to the Resal Report Portal with public, team login, or PIN protection                                               | 1 skill             | Local                                                   |
+| [devtools](docs/devtools.md)                     | Developer productivity tools: PR review feedback, multi-stack coding-standards review, and detailed PR/changelog + feature-details generation | 3 skills            | Local                                                   |
+| [resal-pm-plugin](docs/resal-pm-plugin.md)       | AI-first product management: idea evaluation, PRDs, competitive analysis, stakeholder updates, research, data analysis                        | 8 skills, 1 command | [AI_Workflow](https://github.com/ResalApps/AI_Workflow) |
 
 ## Quick Start
 
@@ -48,8 +48,8 @@ Besides Claude Code plugins, this repo also hosts **Spec Kit extensions** under
 [`extensions/`](extensions/). These hook into the Spec Kit (`specify`) workflow rather than the
 Claude Code `/plugin` system. Full guide: [`extensions/README.md`](extensions/README.md).
 
-| Extension | ID | Command | What it does |
-|-----------|----|---------|--------------|
+| Extension             | ID   | Command                | What it does                                                                                                                                                      |
+| --------------------- | ---- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Detailed PR Generator | `pr` | `/speckit-pr-generate` | Generates a **CHANGELOG** + plain-English **feature-details** doc, then creates/updates the PR description under "What have been developed and how to review it". |
 
 ### Install (requires the `specify` CLI and a `.specify/` project)
@@ -57,8 +57,8 @@ Claude Code `/plugin` system. Full guide: [`extensions/README.md`](extensions/RE
 **By name, via the catalog** — add the catalog once, then install:
 
 ```bash
-specify extension catalog add resal \
-  https://raw.githubusercontent.com/ResalApps/resal-marketplace/master/extensions/catalog.json
+specify extension catalog add --name resal --install-allowed https://raw.githubusercontent.com/ResalApps/resal-marketplace/master/extensions/catalog.json
+
 specify extension add pr
 ```
 

@@ -81,7 +81,29 @@ typically once the PR exists, to inject the feature-details into its description
 
 ## Publishing (maintainers)
 
-By-name and `--from` installs need a release ZIP whose archive contains `pr/extension.yml`:
+### Automated — CI/CD (default)
+
+Releases are cut automatically by the [`Release extensions`](../.github/workflows/release-extensions.yml)
+GitHub Actions workflow. It runs **only when files under `extensions/` change** on `master`, and for
+each changed `extensions/<id>/` it:
+
+1. **Bumps the version** — patch by default. To control it, either edit `version:` in
+   `extensions/<id>/extension.yml` yourself (CI honours an already-ahead version verbatim) or run the
+   workflow manually (Actions → *Release extensions* → *Run workflow*) and pick `bump`
+   (patch/minor/major) or `set_version`.
+2. **Updates [`catalog.json`](catalog.json)** — sets that extension's `version` and `download_url`
+   (and `updated_at`). A **brand-new** `extensions/<id>/` folder gets a full catalog entry generated
+   automatically (the `pr` entry is the template), so adding an extension is enough to publish it.
+3. **Packages** `dist/<id>.zip` via [`scripts/package.sh`](scripts/package.sh).
+4. **Commits** the version/catalog changes back to `master` with `[skip ci]` (so it doesn't loop).
+5. **Creates a GitHub release** tagged `<id>-v<version>` with the ZIP attached, and uploads the ZIP as
+   a workflow artifact.
+
+So the normal flow is just: edit the extension under `extensions/<id>/`, push to `master`, done.
+
+### Manual (fallback)
+
+The same packaging can be done by hand if needed:
 
 ```bash
 extensions/scripts/package.sh pr           # builds dist/pr.zip

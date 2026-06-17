@@ -18,14 +18,20 @@ idempotency markers so re-runs refresh rather than duplicate.
 
 ## Command
 
-| Command | Invocation | Description |
-|---------|------------|-------------|
+| Command               | Invocation             | Description                                                                         |
+| --------------------- | ---------------------- | ----------------------------------------------------------------------------------- |
 | `speckit.pr.generate` | `/speckit-pr-generate` | Generate the CHANGELOG + feature-details doc, then create/update the PR description |
 
 ## Usage
 
 ```text
 /speckit-pr-generate
+```
+
+if you want to genrate the Doc but does not want to create the PR
+
+```text
+/speckit-pr-generate do not create a PR
 ```
 
 Optional flags:

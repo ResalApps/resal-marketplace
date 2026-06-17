@@ -8,7 +8,7 @@ A collection of Claude Code plugins for the Resal engineering and product teams.
 | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- | ------------------------------------------------------- |
 | [add-app-deployment](docs/add-app-deployment.md) | Add deployment pipelines for new apps (ECR, Helm, ArgoCD, GitHub Actions)                                                                     | 1 skill             | Local                                                   |
 | [report-publisher](docs/report-publisher.md)     | Publish generated reports to the Resal Report Portal with public, team login, or PIN protection                                               | 1 skill             | Local                                                   |
-| [devtools](docs/devtools.md)                     | Developer productivity tools: PR review feedback, multi-stack coding-standards review, and detailed PR/changelog + feature-details generation | 3 skills            | Local                                                   |
+| [devtools](docs/devtools.md)                     | Developer productivity tools: PR review feedback, multi-stack coding-standards review, QA How-To-Test manuals, and detailed PR/changelog + feature-details generation | 4 skills            | Local                                                   |
 | [resal-pm-plugin](docs/resal-pm-plugin.md)       | AI-first product management: idea evaluation, PRDs, competitive analysis, stakeholder updates, research, data analysis                        | 8 skills, 1 command | [AI_Workflow](https://github.com/ResalApps/AI_Workflow) |
 
 ## Quick Start
@@ -36,6 +36,7 @@ Plugins trigger automatically based on context, or use slash commands:
 /add-app-deployment:add-app-deployment    # Deploy a new app
 /report-publisher:report-publisher        # Publish a generated report
 /devtools:pr-review                       # Process PR review feedback
+/devtools:how-to-test                     # Generate a QA How-To-Test manual for a feature
 /devtools:speckit-pr-generate             # Generate CHANGELOG + feature-details, fill the PR description
 /resal-pm-plugin:evaluate-idea            # Evaluate a product idea
 /resal-pm-plugin:write-spec               # Write a PRD
@@ -153,6 +154,8 @@ resal-marketplace/
         |-- README.md
         +-- skills/
             |-- pr-review/
+            |   +-- SKILL.md
+            |-- how-to-test/
             |   +-- SKILL.md
             |-- resal-standards-review/
             |   +-- SKILL.md

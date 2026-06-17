@@ -4,11 +4,12 @@ Developer productivity tools for Resal engineering workflows.
 
 ## Included Skills
 
-| Skill | Description |
-|---|---|
-| `pr-review` | Process GitHub PR review comments, plan fixes or replies, apply approved changes, push, and resolve addressed threads. |
+| Skill                    | Description                                                                                                                                                                                                                                                                                                                              |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pr-review`              | Process GitHub PR review comments, plan fixes or replies, apply approved changes, push, and resolve addressed threads.                                                                                                                                                                                                                   |
+| `how-to-test`            | Generate (or update) an internal QA-facing **How-To-Test manual** for a completed feature — a self-contained HTML walkthrough of every user case, with Playwright screenshots (captured against mocked backend endpoints) for web pages and request/response samples for headless APIs. Supports single- and multi-project workspaces.                                                                                                                                                                                                                                                               |
 | `resal-standards-review` | Review/audit any Resal project against the **Resal Engineering Standards**. Auto-detects the stack (Python/FastAPI, .NET, React web, or React Native), produces a severity-rated **Compliance & Gaps Report**, and — in full mode — asks which severity tiers to fix before generating a **Remedy Plan**. Supports **report-only** mode. |
-| `speckit-pr-generate` | Generate a technical **CHANGELOG** and a plain-English, PM-friendly **feature-details** doc under `docs/<feature>/`, then create or update the PR description with the feature details under **"What have been developed and how to review it"**. Works with or without Spec Kit; idempotent (re-runs refresh, never duplicate). |
+| `speckit-pr-generate`    | Generate a technical **CHANGELOG** and a plain-English, PM-friendly **feature-details** doc under `docs/<feature>/`, then create or update the PR description with the feature details under **"What have been developed and how to review it"**. Works with or without Spec Kit; idempotent (re-runs refresh, never duplicate).         |
 
 ## Usage
 
@@ -22,6 +23,12 @@ Install from the Resal marketplace:
 
 ```
 /devtools:pr-review ResalApps/example-repo#123
+```
+
+### how-to-test
+
+```
+/devtools:how-to-test generate a test Doc for the spec feature xx-xxx
 ```
 
 ### resal-standards-review

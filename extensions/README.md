@@ -45,6 +45,28 @@ You need the `specify` CLI and a Spec Kit project (a `.specify/` directory).
    > `raw.githubusercontent.com` to unauthenticated callers, so use Option B until the catalog and
    > release asset are publicly reachable.
 
+#### Stale catalog → installs an old version / 404 on the release ZIP
+
+`specify` caches the fetched catalog **per project for 1 hour**
+(`.specify/extensions/.cache/`, `CACHE_DURATION = 3600`). Right after a new release, an install can
+still resolve the *previous* version and fail with, e.g.:
+
+```text
+Downloading Detailed PR Generator v1.0.0...
+Error: Failed to download extension from .../releases/download/pr-v1.0.0/pr.zip: HTTP Error 404: Not Found
+```
+
+That's the client cache, not the catalog — the published [`catalog.json`](catalog.json) already points
+at the new release. Clear the cache and retry (run from the Spec Kit project where you installed):
+
+```powershell
+Remove-Item -Recurse -Force .specify\extensions\.cache   # bash: rm -rf .specify/extensions/.cache
+specify extension add pr
+```
+
+It should then download the current version. Alternatively, just wait up to an hour for the cache to
+expire. There is no `--refresh` flag on `extension add` today.
+
 ### Option B — local dev install from a clone (works today)
 
 Clone this repo, then point `--dev` at the extension directory (an **external** path, not inside the

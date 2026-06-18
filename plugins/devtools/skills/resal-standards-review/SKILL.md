@@ -76,6 +76,17 @@ Read `checks-core.md` and the detected stack module(s). Then detect what the pro
 ### Step 3.5 — Enumerate the REAL source tree (hard gate)
 **Before running any check, list the actual files** — `Glob **/*` (or `git ls-files`) on the target — and skim the real directory structure. Do **not** assume file names from the stack's typical layout (a service may be a mature 300-file app, not a skeleton). This step exists because the single most common failure mode is authoring findings against *imagined* files (e.g. `LoginScreen.tsx`, `Class1.cs`, `template-processor.ts`) that don't exist. You may only cite a path that appears in this enumeration **and** that you have opened.
 
+### Secret redaction rule (hard gate)
+You may inspect files to determine whether a secret is hardcoded, but you must never copy secret
+values into the chat, report, remedy plan, issue text, commit messages, or logs. This includes
+passwords, API keys, bearer tokens, JWTs, cookies, private keys, connection strings, database URLs,
+OAuth secrets, webhook secrets, signing keys, and realistic-looking test credentials.
+
+For a secret finding, cite the file and line number, name the variable/key when safe, and replace the
+value with `<REDACTED>`. If the exact line contains only a secret value, describe the surrounding key
+or setting without quoting the value. Recommend rotation when the value may have been exposed. Do not
+write a sample "fixed" value.
+
 ### Step 4 — Run the checks
 Work through the applicable `CORE-*` checks **and** the stack module's checks. For each finding capture: check ID, what's wrong, **evidence (`file:line`)**, expected convention. Use `Grep`/`Glob`/`Read`; cite real locations.
 

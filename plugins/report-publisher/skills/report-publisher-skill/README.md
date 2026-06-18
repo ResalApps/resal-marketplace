@@ -45,6 +45,8 @@ Claude should read `SKILL.md` before publishing and verify the MCP server first:
 MCP_PUBLISH_API_KEY is configured on the Report Portal host.
 https://reports.resal.dev/mcp/healthz returns status ok with the bearer key.
 Remote publishing uses ./scripts/remote-publish-report.sh or .ps1 with --server-url / -ServerUrl.
+Allowed remote hosts are `https://reports.resal.dev` and `https://reports.abushanab.net` by default.
+Use `REPORT_PUBLISHER_ALLOW_CUSTOM_SERVER=1` only for an approved diagnostic against a named host.
 ```
 
 ## Codex
@@ -284,7 +286,7 @@ skills/report-publisher-skill/
 Local test equivalents:
 
 ```text
-https://reports.abushanab.test/
-https://reports.abushanab.test/admin/
-https://auth.abushanab.test/
+https://reports.abushanab.net/
+https://reports.abushanab.net/admin/
+https://auth.abushanab.net/
 ```

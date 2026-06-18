@@ -215,6 +215,12 @@ Run remote publishes from a full Report Portal package checkout:
 
 The wrapper archives the report locally, uploads it to `/mcp/uploads`, calls `/mcp/publish`, and forwards the same metadata, access grants, PIN, and retention options supported by local publishing.
 
+Remote wrapper hosts are allowlisted by default: `https://reports.resal.dev` for production and
+`https://reports.abushanab.net` for the local/test stack. For an approved one-off diagnostic against
+another host, set `REPORT_PUBLISHER_ALLOW_CUSTOM_SERVER=1` and state the exact target URL before
+running the command. Do not send report contents, upload tokens, PINs, or bearer headers to
+unapproved hosts.
+
 ### 5. Troubleshooting
 
 | Symptom | Check |
@@ -343,9 +349,9 @@ Claude asks for any missing source path, visibility mode, relative URL, versioni
 Claude chooses the command based on where it is running:
 
 - On the VPS: use `/opt/report-portal/scripts/publish-report.sh`.
-- On Linux/macOS workstation: use `remote-publish-report.sh` with `--server-url` and `MCP_PUBLISH_API_KEY`.
+- On Linux/macOS workstation: use `remote-publish-report.sh` with an approved `--server-url` and `MCP_PUBLISH_API_KEY`.
 - On Windows with Docker Desktop: use `publish-report.ps1` with `-Local`.
-- On Windows publishing remotely: use `remote-publish-report.ps1` with `-ServerUrl` and `MCP_PUBLISH_API_KEY`.
+- On Windows publishing remotely: use `remote-publish-report.ps1` with an approved `-ServerUrl` and `MCP_PUBLISH_API_KEY`.
 
 ### Phase 3: Publish
 

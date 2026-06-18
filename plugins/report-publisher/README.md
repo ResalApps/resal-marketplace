@@ -55,7 +55,7 @@ curl -fsS \
   https://reports.resal.dev/mcp/healthz
 ```
 
-Workstation clients should run the MCP-backed `remote-publish-report` wrapper from a full Report Portal package checkout and pass `--server-url https://reports.resal.dev`; the wrapper uploads to `/mcp/uploads` and publishes through `/mcp/publish`.
+Workstation clients should run the MCP-backed `remote-publish-report` wrapper from a full Report Portal package checkout and pass `--server-url https://reports.resal.dev`; the wrapper uploads to `/mcp/uploads` and publishes through `/mcp/publish`. The wrappers allow only `https://reports.resal.dev` and `https://reports.abushanab.net` by default; use `REPORT_PUBLISHER_ALLOW_CUSTOM_SERVER=1` only for an approved diagnostic against a named host.
 
 ## Agent Setup
 
@@ -73,4 +73,5 @@ Each surface should confirm the same MCP setup before remote publishing:
 MCP_PUBLISH_API_KEY is configured.
 https://reports.resal.dev/mcp/healthz returns status ok.
 Remote publish commands use --server-url / -ServerUrl and the MCP-backed wrappers.
+Do not send report contents or MCP traffic to unapproved hosts.
 ```

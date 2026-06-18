@@ -17,6 +17,8 @@ const { URL } = require("url");
 const MCP_PUBLISH_API_KEY = process.env.MCP_PUBLISH_API_KEY || "";
 const MCP_SERVER_URL = process.env.MCP_SERVER_URL || "https://reports.resal.dev/mcp";
 const MCP_HOST_HEADER = process.env.MCP_HOST_HEADER || "";
+const MCP_ALLOW_CUSTOM_SERVER_URL = process.env.MCP_ALLOW_CUSTOM_SERVER_URL === "1";
+const APPROVED_MCP_HOSTS = new Set(["reports.resal.dev", "reports.abushanab.net"]);
 
 if (!MCP_PUBLISH_API_KEY) {
   console.error("Error: MCP_PUBLISH_API_KEY environment variable is required");
@@ -25,7 +27,26 @@ if (!MCP_PUBLISH_API_KEY) {
 
 const baseUrl = MCP_SERVER_URL.replace(/\/$/, "");
 const mcpUrl = new URL(baseUrl);
+
+if (!MCP_ALLOW_CUSTOM_SERVER_URL) {
+  if (mcpUrl.protocol !== "https:") {
+    console.error("Error: MCP_SERVER_URL must use https unless MCP_ALLOW_CUSTOM_SERVER_URL=1 is set");
+    process.exit(1);
+  }
+  if (!APPROVED_MCP_HOSTS.has(mcpUrl.hostname) || !mcpUrl.pathname.startsWith("/mcp")) {
+    console.error(
+      "Error: MCP_SERVER_URL must point to an approved Report Portal /mcp endpoint " +
+      "(reports.resal.dev or reports.abushanab.net). Set MCP_ALLOW_CUSTOM_SERVER_URL=1 only for an approved diagnostic.",
+    );
+    process.exit(1);
+  }
+}
+
 let mcpSessionId = null;
+
+function sanitizeErrorBody(body) {
+  return body.split(MCP_PUBLISH_API_KEY).join("<REDACTED>");
+}
 
 // ----- HTTP Request Helper (returns response object with SSE stream) -----
 function postMCPMessage(bodyJson) {
@@ -63,7 +84,7 @@ function postMCPMessage(bodyJson) {
         let errorBody = "";
         res.on("data", (chunk) => { errorBody += chunk; });
         res.on("end", () => {
-          reject(new Error(`HTTP ${res.statusCode}: ${errorBody}`));
+          reject(new Error(`HTTP ${res.statusCode}: ${sanitizeErrorBody(errorBody)}`));
         });
         return;
       }

@@ -36,6 +36,25 @@ Before starting, check if the infrastructure repo is already available:
 2. Check common local paths (e.g., sibling directories of the current project)
 3. If not found, clone it to a suitable location and inform the user
 
+## Security Boundaries
+
+The infrastructure repository is a required Resal-owned dependency for this skill. Treat it as trusted
+only when the local checkout or clone has the expected remote:
+
+```text
+https://github.com/ResalApps/infrastructure.git
+```
+
+Do not use forks, user-provided infrastructure repository URLs, arbitrary GitHub Actions workflows,
+or templates from outside the `ResalApps` organization. If the infrastructure repo is missing and a
+network clone is required, state the exact repository URL before cloning. Do not execute scripts from
+the infrastructure repo as part of discovery; read templates and generate reviewable file changes.
+
+Before committing or opening PRs, show or summarize the generated infrastructure/app diffs and verify
+that all reusable workflow references still point to the approved `ResalApps/infrastructure` source.
+Never place plaintext credentials, tokens, or 1Password secret values into generated manifests,
+workflow files, commit messages, or PR text. Reference secret names/paths only.
+
 ## Workflow
 
 ### Phase 1: Gather Information

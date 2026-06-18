@@ -32,7 +32,7 @@ while [[ $# -gt 0 ]]; do
     -h|--help)
       cat <<HELP
 Usage:
-  ./scripts/remote-publish-report.sh --server-url https://reports.example.test --source ./report --visibility public|team|pin --url relative/path [options]
+  ./scripts/remote-publish-report.sh --server-url https://reports.resal.dev --source ./report --visibility public|team|pin --url relative/path [options]
 
 Options:
   --api-key "<MCP_PUBLISH_API_KEY>"  Defaults to the MCP_PUBLISH_API_KEY environment variable
@@ -53,7 +53,7 @@ HELP
   esac
 done
 
-[[ -n "$SERVER_URL" ]] || read -r -p "Reports base URL (for example https://reports.example.test): " SERVER_URL
+[[ -n "$SERVER_URL" ]] || read -r -p "Reports base URL (https://reports.resal.dev or https://reports.abushanab.net): " SERVER_URL
 [[ -n "$API_KEY" ]] || { read -r -s -p "MCP publish API key: " API_KEY; echo; }
 [[ -n "$SOURCE" && -e "$SOURCE" ]] || { echo "Source required and must exist." >&2; exit 1; }
 [[ -n "$VISIBILITY" ]] || read -r -p "Visibility [public/team/pin]: " VISIBILITY
@@ -62,6 +62,29 @@ if [[ "$VISIBILITY" == "pin" && -z "$PIN" ]]; then
   read -r -s -p "PIN/password for this report URL: " PIN
   echo
 fi
+
+validate_server_url() {
+  if [[ "${REPORT_PUBLISHER_ALLOW_CUSTOM_SERVER:-0}" == "1" ]]; then
+    return 0
+  fi
+  if [[ "$SERVER_URL" != https://* ]]; then
+    echo "ERROR: --server-url must use https unless REPORT_PUBLISHER_ALLOW_CUSTOM_SERVER=1 is set." >&2
+    exit 1
+  fi
+  local without_scheme host
+  without_scheme="${SERVER_URL#https://}"
+  host="${without_scheme%%/*}"
+  host="${host%%:*}"
+  case "$host" in
+    reports.resal.dev|reports.abushanab.net) ;;
+    *)
+      echo "ERROR: --server-url must be reports.resal.dev or reports.abushanab.net." >&2
+      echo "Set REPORT_PUBLISHER_ALLOW_CUSTOM_SERVER=1 only for an approved diagnostic." >&2
+      exit 1
+      ;;
+  esac
+}
+validate_server_url
 
 SOURCE_ABS="$(cd "$(dirname "$SOURCE")" && pwd)/$(basename "$SOURCE")"
 COMPOSE_ARGS=(-f docker-compose.yml)

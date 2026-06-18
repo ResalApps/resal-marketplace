@@ -1,7 +1,7 @@
 {
   "name": "resal-deployment",
   "description": "Add deployment pipeline support for new applications to the Resal GitOps infrastructure (ECR, Helm, ArgoCD, GitHub Actions)",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": {
     "name": "Resal DevOps"
   },

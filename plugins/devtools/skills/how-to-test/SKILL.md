@@ -27,6 +27,28 @@ Before generating, scan the workspace root to detect project structure:
      public dir), use it as the output root.
    - Otherwise, default to `<project-root>/how-to-test/` for each project.
 
+## Security and redaction rules
+
+The manual is for internal QA, but it must not collect or publish secrets. Never include plaintext
+passwords, API keys, bearer tokens, refresh tokens, session IDs, cookies, private keys, OAuth codes,
+database URLs, connection strings, or full `.env` values in generated HTML, screenshots, request
+samples, logs, or comments.
+
+When documenting prerequisites:
+- List environment variable names and purpose only; use placeholders such as `<REDACTED>` or
+  `<set locally>`.
+- For seeded dev accounts, include non-secret identifiers such as usernames/emails only when they
+  are already documented test identities. Do not include passwords; say to retrieve them from the
+  approved secret store or existing team runbook.
+- Redact `Authorization`, `Cookie`, `Set-Cookie`, `X-Api-Key`, OAuth, CSRF, and similar headers from
+  every curl output and request/response sample.
+- If an existing test fixture contains realistic-looking credentials, replace the value with
+  `<REDACTED>` before writing it into the manual.
+
+If a flow needs authentication, prefer mocked/stubbed auth responses with fake tokens. Do not capture
+screenshots of pages that visibly show real secrets or personal data; mask or replace that data in
+the Playwright route mocks first.
+
 ## Output conventions
 
 Output paths depend on the project type detected. Choose the best match:
@@ -67,7 +89,8 @@ Proceed in the order below — each step depends on the previous one.
 1. **Scaffold HTML** — Create the file with a Cover + TOC with anchor links; mark it a
    Development-only draft. Include the full HTML document structure.
 2. **Prerequisites & dev tooling** — how to start the app in development, any seeded dev
-   credentials or test accounts, environment variables required, dev URLs / dashboards.
+   test account identifiers, required environment variable names, dev URLs / dashboards. Apply the
+   redaction rules above; do not print secrets or passwords.
 3. **A diagram** of the feature's flow. Include a mermaid flow diagram embedded via CDN. If mermaid
    is not possible, include an inline SVG; use excalidraw only if both are unavailable. Provide a
    one-sentence text fallback caption.
@@ -87,7 +110,7 @@ Proceed in the order below — each step depends on the previous one.
 ### Checklist
 
 - [ ] Cover + TOC present and marked Development-only draft
-- [ ] Prerequisites section complete (dev start command, credentials, URLs)
+- [ ] Prerequisites section complete (dev start command, redacted test-account/env-var guidance, URLs)
 - [ ] Flow diagram included (mermaid via CDN preferred)
 - [ ] User story sections present with numbered step lists
 - [ ] Screenshots for each form/page — each has `alt` text and caption; HTML passes a11y smoke check

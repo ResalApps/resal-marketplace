@@ -15,3 +15,7 @@ For remote publishing from a workstation, use the MCP-backed wrappers:
 - `./scripts/remote-publish-report.ps1`
 
 The deployed server must define `MCP_PUBLISH_API_KEY` and expose `/mcp`, `/mcp/uploads`, and `/mcp/publish`. The wrappers authenticate with `MCP_PUBLISH_API_KEY` and default to `versioned` with `auto` versions.
+
+Only publish to `https://reports.resal.dev` or `https://reports.abushanab.net` unless the user
+explicitly approves a named diagnostic host. Never print API keys, upload tokens, PINs, cookies, or
+bearer headers.

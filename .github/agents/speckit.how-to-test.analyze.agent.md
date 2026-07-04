@@ -1,16 +1,17 @@
 ---
-description: Analyze Spec Kit plan/tasks for missing E2E, screenshot-capture, and
-  API sample tasks required before How-To-Test documentation.
+description:
+  Analyze Spec Kit plan/tasks for missing E2E, screenshot-capture, and
+  API sample tasks, and create reusable project memory for How-To-Test documentation.
 ---
-
 
 <!-- Extension: how-to-test -->
 <!-- Config: .specify/extensions/how-to-test/ -->
+
 # Analyze How-To-Test Coverage
 
-Review the active Spec Kit feature before implementation and make sure `tasks.md` contains the E2E,
-UI screenshot-capture, API sample, and documentation-readiness work needed for the later
-How-To-Test manual.
+Review the active Spec Kit feature before implementation, create or refresh the reusable workspace
+project memory, and make sure `tasks.md` contains the E2E, UI screenshot-capture, API sample,
+frontend, and documentation-readiness work needed for the later How-To-Test manual.
 
 Recommended lifecycle phase: `after_tasks`. At this point `spec.md`, `plan.md`, and `tasks.md`
 exist, but implementation has not started, so missing tests can be added before developers begin.
@@ -35,7 +36,7 @@ Optional flags:
 ## Behavior Overview
 
 ```text
-resolve feature -> load artifacts -> map impacted projects -> audit tasks -> patch tasks.md -> report
+resolve feature -> load artifacts -> scan workspace -> update project memory -> map impacted projects -> audit tasks -> patch tasks.md -> report
 ```
 
 ## Instructions
@@ -59,20 +60,75 @@ Optional but important files:
 - `<feature_dir>/data-model.md`
 - `<feature_dir>/contracts/*`
 - `<feature_dir>/research.md`
-- `.github/memory/project-memory.md`
+- `.github/memory/project-memory.md` (create or refresh before impact analysis)
 - Recent git diff and changed files, if available
 
-### 2. Load project memory and inspect the workspace
+### 2. Scan workspace and update project memory
 
-- Read `.github/memory/project-memory.md` when it exists.
-- If it is missing, create a minimal scan note or tell the user to run the `how-to-test` skill's
-  initialization pass. Do not block this command if enough feature context exists.
-- Identify impacted projects from the feature plan, task file paths, contracts, routes, menu names,
-  UI screens, mobile flows, backend endpoints, and changed files.
-- Pay special attention to web and mobile frontends. Detect Playwright, Cypress, Detox, Maestro,
-  Appium, Expo, React Native, Vite, Next.js, and React markers when present.
+Create or refresh `.github/memory/project-memory.md` before mapping feature impact. This command owns
+the memory initialization pass; do not tell the user to run another command just to create the file.
 
-### 3. Build the documentation coverage matrix
+Scan deeply from the workspace root while excluding generated/vendor folders such as `.git/`,
+`node_modules/`, `bin/`, `obj/`, `dist/`, `build/`, `.next/`, `.nuxt/`, `.turbo/`, `.expo/`,
+`coverage/`, `.cache/`, package-manager caches, and generated How-To-Test assets.
+
+Use the existing memory file as a hint only. Compare it with the current marker scan, update stale
+entries, add new projects, and add `Last scanned: <YYYY-MM-DD>`.
+
+Detect project markers:
+
+- Workspace/package boundaries: root `package.json` workspaces, `pnpm-workspace.yaml`, `nx.json`,
+  `turbo.json`, `lerna.json`, `rush.json`, solution files, and package/app folders.
+- Web frontend: `package.json` dependencies or scripts for React, Next.js, Vite, CRA, Angular, Vue,
+  Nuxt, Svelte, SvelteKit, Remix, Astro, TanStack Router, React Router, Storybook, Playwright, or
+  Cypress; plus `public/`, `pages/`, `app/`, `src/routes`, `src/pages`, `src/main.*`,
+  `src/App.*`, `vite.config.*`, `next.config.*`, `angular.json`, `astro.config.*`, or
+  `svelte.config.*`.
+- Mobile frontend: React Native, Expo, `app.json`, `app.config.*`, `android/`, `ios/`,
+  `metro.config.*`, `expo-router`, Detox, Maestro, or Appium.
+- Backend/API: `*.csproj`, `*.sln`, `pyproject.toml`, `go.mod`, `Cargo.toml`, OpenAPI contracts,
+  controllers, routers, API gateways, generated clients, or API test folders.
+- Deployment/infrastructure: Docker, Compose, Helm, Terraform, Pulumi, ArgoCD, Kubernetes manifests,
+  GitHub Actions, and deployment scripts.
+- Tooling/documentation: plugin manifests, extension manifests, docs-only packages, templates,
+  scripts, command specs, and generated agent/prompt files.
+
+Also inspect `spec.md`, `plan.md`, `quickstart.md`, and contracts for planned project structure. If a
+frontend is described in feature artifacts but no implementation marker exists yet, record it as
+`planned/spec-only`, not as detected implementation.
+
+The memory file must include these sections:
+
+- `Frontend Coverage Summary`: state whether implemented web and mobile frontends were detected,
+  whether only planned/spec frontend context exists, and which frontend paths are reusable for later
+  documentation.
+- `Frontend Project Inventory`: one row per web or mobile frontend, including project name, relative
+  path, status (`implemented`, `planned/spec-only`, or `stale`), platform, framework/build tool,
+  router or app shell evidence, public/assets directory, How-To-Test root, screenshot runner, key
+  dev/build/test commands, and evidence source paths.
+- `Detected Projects`: all other projects and workspace-level tooling, including role, stack
+  markers, commands when discoverable, documentation root, How-To-Test output root, and notes.
+- `Scan Markers`: marker files found or explicitly not found, especially frontend markers.
+- `Maintenance Rules`: remind later commands to reuse the memory, verify it against current marker
+  files, and update it when frontend markers appear or disappear.
+
+If no web or mobile frontend is detected, state that explicitly in both `Frontend Coverage Summary`
+and `Frontend Project Inventory` instead of leaving an empty section. If planned frontend context is
+found, reference the source spec/plan/quickstart paths so the later document command can reuse that
+context without guessing.
+
+### 3. Identify impacted projects
+
+Identify impacted projects from the freshly updated project memory plus the feature plan, task file
+paths, contracts, routes, menu names, UI screens, mobile flows, backend endpoints, changed files, and
+tests.
+
+Pay special attention to web and mobile frontends. Use the `Frontend Project Inventory` to decide
+where E2E, screenshot capture, How-To-Test assets, and manual index tasks should be added. When a
+feature affects a planned frontend path that is not implemented yet, add tasks against the planned
+path and mark the project status in the report as `planned/spec-only`.
+
+### 4. Build the documentation coverage matrix
 
 For each user story and scenario in `spec.md`, determine whether the later How-To-Test manual will
 need one or more of the following:
@@ -104,7 +160,7 @@ Treat these as missing coverage when tasks are absent or too vague:
   manual.
 - A test task says only "add tests" without path, runner, scenario, or expected result.
 
-### 4. Patch `tasks.md`
+### 5. Patch `tasks.md`
 
 Unless `--report-only` was supplied, update `tasks.md`.
 
@@ -126,6 +182,7 @@ Rules:
 
 ```markdown
 <!-- how-to-test-prepare:start -->
+
 ### How-To-Test readiness tasks
 
 - [ ] T123 [P] [US1] Add Playwright E2E test for ...
@@ -143,13 +200,14 @@ Task wording examples:
 - [ ] T045 [US1] Update User Management How-To-Test documentation index under frontend/public/how-to-test/features/user-management/index.html
 ```
 
-### 5. Report
+### 6. Report
 
 Report:
 
 - Feature path audited.
 - Selected lifecycle phase and recommendation. If the user did not select a phase, state
   `after_tasks` as the recommendation.
+- Project memory path written and frontend inventory summary.
 - Impacted projects.
 - Missing coverage found.
 - Tasks added, with task IDs.

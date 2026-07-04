@@ -72,13 +72,21 @@ Never invent behavior, screens, endpoints, examples, test counts, or coverage.
 Create or refresh `.github/memory/project-memory.md`.
 
 Scan deeply from the workspace root while excluding generated/vendor folders such as `.git/`,
-`node_modules/`, `bin/`, `obj/`, `dist/`, `build/`, `.next/`, `.turbo/`, `.expo/`, `coverage/`, and
-package-manager caches.
+`node_modules/`, `bin/`, `obj/`, `dist/`, `build/`, `.next/`, `.nuxt/`, `.turbo/`, `.expo/`,
+`coverage/`, `.cache/`, package-manager caches, and generated How-To-Test assets.
+
+If `/speckit-how-to-test-analyze` already created `.github/memory/project-memory.md`, reuse it as
+the starting point, then verify it against the current marker scan before writing manuals. Never
+trust stale memory blindly.
 
 Detect project markers:
 
-- Web frontend: React, Next.js, Vite, CRA, Angular, Vue, Svelte, Remix, `public/`, `pages/`,
-  `app/`, `src/routes`, `vite.config.*`, `next.config.*`.
+- Workspace/package boundaries: root `package.json` workspaces, `pnpm-workspace.yaml`, `nx.json`,
+  `turbo.json`, `lerna.json`, `rush.json`, solution files, and package/app folders.
+- Web frontend: React, Next.js, Vite, CRA, Angular, Vue, Nuxt, Svelte, SvelteKit, Remix, Astro,
+  TanStack Router, React Router, `public/`, `pages/`, `app/`, `src/routes`, `src/pages`,
+  `src/main.*`, `src/App.*`, `vite.config.*`, `next.config.*`, `angular.json`,
+  `astro.config.*`, `svelte.config.*`.
 - Mobile frontend: React Native, Expo, `app.json`, `app.config.*`, `android/`, `ios/`,
   `metro.config.*`, `expo-router`.
 - Backend/API: `*.csproj`, `*.sln`, `pyproject.toml`, `go.mod`, `Cargo.toml`, OpenAPI contracts,
@@ -87,8 +95,26 @@ Detect project markers:
 - Tooling/documentation: plugin manifests, extension manifests, docs-only packages, templates,
   scripts.
 
+Also inspect the active feature's `spec.md`, `plan.md`, `quickstart.md`, and contracts for planned
+project structure. If a frontend is described in feature artifacts but no implementation marker
+exists yet, record it as `planned/spec-only`, not as detected implementation.
+
 For each project, record name, relative path, role, stack markers, run/test commands when
 discoverable, documentation root, How-To-Test output root, and screenshot runner.
+
+The memory file must keep the same reusable shape as the analyze command:
+
+- `Frontend Coverage Summary`.
+- `Frontend Project Inventory` with one row per web or mobile frontend, including status,
+  framework/build tool, public/assets directory, How-To-Test root, screenshot runner, commands, and
+  evidence source paths.
+- `Detected Projects`.
+- `Scan Markers`.
+- `Maintenance Rules`.
+
+If no web or mobile frontend is detected, say so explicitly. If only planned/spec frontend context
+exists, reference the source feature artifacts so this command can generate an honest draft without
+pretending implementation files exist.
 
 ### 4. Determine impacted projects and parent feature
 

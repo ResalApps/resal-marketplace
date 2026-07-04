@@ -2,6 +2,21 @@
 
 All notable changes to the How-To-Test extension.
 
+## [1.4.0] - 2026-07-04
+
+### Added
+
+- `/speckit-how-to-test-analyze` now creates or refreshes `.github/memory/project-memory.md` before
+  task coverage analysis.
+- Added a reusable `Frontend Project Inventory` memory section that records implemented web/mobile
+  frontends, planned/spec-only frontend paths, screenshot runners, How-To-Test roots, commands, and
+  evidence source paths.
+
+### Changed
+
+- Aligned `/speckit-how-to-test-document` with the same project-memory schema so manual generation
+  reuses and verifies the analyze command's frontend discovery.
+
 ## [1.3.2] - 2026-07-04
 
 ### Fixed

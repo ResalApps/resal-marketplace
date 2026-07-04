@@ -13,7 +13,7 @@ lifecycle.
 | Command | Invocation | Description |
 |---|---|---|
 | `speckit.how-to-test.document` | `/speckit-how-to-test-document` | Generate or update the QA-facing How-To-Test manual with diagram assets when relevant for the completed active feature |
-| `speckit.how-to-test.analyze` | `/speckit-how-to-test-analyze` | Add missing E2E/API/screenshot/diagram readiness tasks to the active feature `tasks.md` |
+| `speckit.how-to-test.analyze` | `/speckit-how-to-test-analyze` | Create/update reusable project memory, deeply inventory frontend projects, and add missing E2E/API/screenshot/diagram readiness tasks to the active feature `tasks.md` |
 
 ## Usage
 
@@ -42,7 +42,8 @@ hooks:
 Recommended readiness phase: `after_tasks`.
 
 At this point `spec.md`, `plan.md`, and `tasks.md` exist, but implementation has not started. The
-prepare command can add missing E2E/API/screenshot/diagram tasks while they are still cheap to
+prepare command first creates or refreshes `.github/memory/project-memory.md`, including a deep
+frontend inventory, then adds missing E2E/API/screenshot/diagram tasks while they are still cheap to
 implement with the feature.
 
 ```yaml
@@ -55,6 +56,9 @@ hooks:
 ## What The Manual Generator Produces
 
 - Workspace project memory at `.github/memory/project-memory.md`.
+- A reusable frontend inventory covering implemented web/mobile frontends and planned/spec-only
+  frontend paths, so later commands can route screenshots and manuals without rediscovering the
+  workspace from scratch.
 - One development-only HTML manual per impacted project, grouped under the correct parent feature.
 - A workspace-level How-To-Test index for multi-project workspaces.
 - Architecture and process-flow diagram assets generated through the `architecture-diagram` and

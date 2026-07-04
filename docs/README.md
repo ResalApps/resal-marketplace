@@ -17,7 +17,8 @@ Documentation for all plugins available in the Resal Claude Code Marketplace.
 | 1 | **add-app-deployment** | Add deployment pipelines for new apps to the Resal GitOps infrastructure | 1 skill | [View docs](add-app-deployment.md) |
 | 2 | **report-publisher** | Publish generated reports to the Resal Report Portal with public, team login, or PIN protection | 1 skill | [View docs](report-publisher.md) |
 | 3 | **devtools** | Developer productivity tools: PR review feedback, multi-stack coding-standards review, QA How-To-Test manuals, and detailed PR/changelog + feature-details generation | 4 skills | [View docs](devtools.md) |
-| 4 | **resal-pm-plugin** | AI-first product management: idea evaluation, PRDs, competitive analysis, stakeholder updates, research, data analysis | 8 skills, 1 command | [View docs](resal-pm-plugin.md) |
+| 4 | **illustration-tools** | Generate polished dark-themed architecture and process-flow diagrams as self-contained HTML+SVG files with built-in Copy/PNG/PDF export | 2 skills | [View docs](illustration-tools.md) |
+| 5 | **resal-pm-plugin** | AI-first product management: idea evaluation, PRDs, competitive analysis, stakeholder updates, research, data analysis | 8 skills, 1 command | [View docs](resal-pm-plugin.md) |
 
 ---
 
@@ -37,6 +38,7 @@ Run this inside Claude Code:
 /plugin install add-app-deployment@resal
 /plugin install report-publisher@resal
 /plugin install devtools@resal
+/plugin install illustration-tools@resal
 /plugin install resal-pm-plugin@resal
 ```
 
@@ -57,6 +59,8 @@ Plugins can be triggered in two ways:
 | "Address the review comments on ResalApps/example#123" | devtools (pr-review) |
 | "Generate a How-To-Test guide for this feature" | devtools (how-to-test) |
 | "Generate a detailed PR / write the PR description for this feature" | devtools (speckit-pr-generate) |
+| "Draw an architecture diagram for our system" | illustration-tools (architecture-diagram) |
+| "Make a process flow for our approval workflow" | illustration-tools (process-flow-diagram) |
 | "I have an idea for a new feature" | resal-pm-plugin (evaluate-idea) |
 | "Write a PRD for the subscription system" | resal-pm-plugin (write-spec) |
 | "What are our competitors doing?" | resal-pm-plugin (competitive-brief) |
@@ -73,6 +77,8 @@ Plugins can be triggered in two ways:
 | `/devtools:how-to-test` | Generate a QA How-To-Test manual for a feature |
 | `/devtools:resal-standards-review` | Audit a project against Resal standards |
 | `/devtools:speckit-pr-generate` | Generate CHANGELOG + feature-details doc and fill the PR description |
+| `/illustration-tools:architecture-diagram` | Generate a system/infrastructure architecture diagram |
+| `/illustration-tools:process-flow-diagram` | Generate a sequential process / workflow diagram |
 | `/resal-pm-plugin:evaluate-idea` | Evaluate a product idea |
 | `/resal-pm-plugin:write-spec` | Write a PRD |
 | `/resal-pm-plugin:prd-to-spec` | Decompose PRD into technical specs |

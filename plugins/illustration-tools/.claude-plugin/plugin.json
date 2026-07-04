@@ -1,0 +1,20 @@
+{
+  "name": "illustration-tools",
+  "description": "Generate polished dark-themed architecture and process-flow diagrams as self-contained HTML+SVG files with built-in Copy/PNG/PDF export",
+  "version": "1.0.0",
+  "author": {
+    "name": "Resal Engineering"
+  },
+  "keywords": [
+    "diagrams",
+    "architecture-diagram",
+    "process-flow",
+    "workflow",
+    "svg",
+    "html",
+    "visualization",
+    "illustration",
+    "documentation",
+    "dark-theme"
+  ]
+}

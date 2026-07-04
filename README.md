@@ -9,6 +9,7 @@ A collection of Claude Code plugins for the Resal engineering and product teams.
 | [add-app-deployment](docs/add-app-deployment.md) | Add deployment pipelines for new apps (ECR, Helm, ArgoCD, GitHub Actions)                                                                     | 1 skill             | Local                                                   |
 | [report-publisher](docs/report-publisher.md)     | Publish generated reports to the Resal Report Portal with public, team login, or PIN protection                                               | 1 skill             | Local                                                   |
 | [devtools](docs/devtools.md)                     | Developer productivity tools: PR review feedback, multi-stack coding-standards review, QA How-To-Test manuals, and detailed PR/changelog + feature-details generation | 4 skills            | Local                                                   |
+| [illustration-tools](docs/illustration-tools.md) | Generate polished dark-themed architecture and process-flow diagrams as self-contained HTML+SVG files with built-in Copy/PNG/PDF export        | 2 skills            | Local                                                   |
 | [resal-pm-plugin](docs/resal-pm-plugin.md)       | AI-first product management: idea evaluation, PRDs, competitive analysis, stakeholder updates, research, data analysis                        | 8 skills, 1 command | [AI_Workflow](https://github.com/ResalApps/AI_Workflow) |
 
 ## Quick Start
@@ -25,6 +26,7 @@ A collection of Claude Code plugins for the Resal engineering and product teams.
 /plugin install add-app-deployment@resal
 /plugin install report-publisher@resal
 /plugin install devtools@resal
+/plugin install illustration-tools@resal
 /plugin install resal-pm-plugin@resal
 ```
 
@@ -38,6 +40,8 @@ Plugins trigger automatically based on context, or use slash commands:
 /devtools:pr-review                       # Process PR review feedback
 /devtools:how-to-test                     # Generate a QA How-To-Test manual for a feature
 /devtools:speckit-pr-generate             # Generate CHANGELOG + feature-details, fill the PR description
+/illustration-tools:architecture-diagram  # Generate a system / infrastructure architecture diagram
+/illustration-tools:process-flow-diagram  # Generate a sequential process / workflow diagram
 /resal-pm-plugin:evaluate-idea            # Evaluate a product idea
 /resal-pm-plugin:write-spec               # Write a PRD
 /resal-pm-plugin:competitive-brief        # Competitive analysis
@@ -102,6 +106,7 @@ Full documentation for each plugin is in the [docs/](docs/) folder:
 - [add-app-deployment](docs/add-app-deployment.md) - Deployment pipeline setup
 - [report-publisher](docs/report-publisher.md) - Report publishing workflow
 - [devtools](docs/devtools.md) - Developer productivity tools
+- [illustration-tools](docs/illustration-tools.md) - Architecture & process-flow diagram generators
 - [resal-pm-plugin](docs/resal-pm-plugin.md) - Product management skills
 - [Spec Kit extensions](extensions/) - `specify` CLI workflow extensions (e.g. the `pr` Detailed PR Generator)
 - [Contributing](docs/contributing.md) - How to add new plugins
@@ -149,18 +154,33 @@ resal-marketplace/
                 |-- scripts/
                 +-- templates/
     +-- devtools/                    # Local plugin
+    |   |-- .claude-plugin/
+    |   |   +-- plugin.json
+    |   |-- README.md
+    |   +-- skills/
+    |       |-- pr-review/
+    |       |   +-- SKILL.md
+    |       |-- how-to-test/
+    |       |   +-- SKILL.md
+    |       |-- resal-standards-review/
+    |       |   +-- SKILL.md
+    |       +-- speckit-pr-generate/
+    |           +-- SKILL.md
+    +-- illustration-tools/          # Local plugin
         |-- .claude-plugin/
         |   +-- plugin.json
         |-- README.md
         +-- skills/
-            |-- pr-review/
-            |   +-- SKILL.md
-            |-- how-to-test/
-            |   +-- SKILL.md
-            |-- resal-standards-review/
-            |   +-- SKILL.md
-            +-- speckit-pr-generate/
-                +-- SKILL.md
+            |-- architecture-diagram/
+            |   |-- SKILL.md
+            |   |-- README.md
+            |   |-- resources/
+            |   +-- examples/
+            +-- process-flow-diagram/
+                |-- SKILL.md
+                |-- README.md
+                |-- resources/
+                +-- examples/
 |-- extensions/                      # Spec Kit (`specify`) extensions
 |   |-- catalog.json                 # Extension catalog (install by name)
 |   |-- README.md                    # Install + publishing guide

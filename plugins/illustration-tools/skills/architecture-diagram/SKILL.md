@@ -1,13 +1,13 @@
 ---
 name: architecture-diagram
-description: Create polished dark-themed architecture diagrams as self-contained HTML+SVG files. Use when the user asks for system, infrastructure, cloud, security, or network topology diagrams.
+description: Create polished dark-themed architecture diagrams as self-contained HTML+SVG files with PNG/PDF export. Use when the user asks for system, infrastructure, cloud, security, or network topology diagrams, or when PR/How-To-Test documentation needs architecture visuals.
 ---
 
 # Architecture Diagram Skill
 
 Create professional technical architecture diagrams as self-contained HTML files with inline SVG graphics and CSS styling.
 
-> **Version 1.1** · MIT License · Part of the Resal `illustration-tools` plugin
+> **Version 1.2** · MIT License · Part of the Resal `illustration-tools` plugin
 
 ## Design System
 
@@ -175,3 +175,26 @@ Always produce a single self-contained `.html` file with:
 - No JavaScript required (pure CSS animations)
 
 The file should render correctly when opened directly in any modern browser. The export toolbar uses two CDN scripts (html2canvas and jsPDF) — no other JavaScript dependencies.
+
+## Documentation Integration
+
+When this skill is invoked by documentation automation such as `pr-generate-description`,
+`speckit.pr.generate`, `how-to-test`, or `speckit-document.how-to-test`, generate both a source HTML
+diagram and an exported PNG image:
+
+- **Source HTML:** write to the feature documentation assets folder, for example
+  `docs/<feature-slug>/assets/diagrams/<feature-slug>-architecture.html` or
+  `<how-to-test-root>/assets/<parent-feature>/<feature-slug>-architecture.html`.
+- **PNG export:** render the HTML and export a PNG beside the source, for example
+  `<feature-slug>-architecture.png`. Use the built-in html2canvas export path when running in a
+  browser, or automate an equivalent screenshot of `#report-container` with Playwright/Puppeteer
+  when available.
+- **Embedding:** generated Markdown or HTML docs must embed the PNG and link to the HTML source for
+  inspection/export. Use descriptive alt text that names the feature and architecture boundary.
+- **Grounding:** only generate this diagram when the feature changes or clarifies architecture,
+  infrastructure, service boundaries, data flow, integrations, security zones, deployment topology,
+  or major component responsibilities. If no architecture impact is found, explicitly omit the
+  diagram instead of inventing one.
+- **Fallback:** if PNG export tooling is unavailable, keep the HTML source, add a clear note in the
+  generated documentation that the PNG export is pending, and report the follow-up. Do not silently
+  embed a broken image.

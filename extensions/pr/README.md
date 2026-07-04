@@ -10,7 +10,13 @@ After a feature is implemented, this extension produces two artifacts under
 
 - **`CHANGELOG.md`** — a precise, technical record of what shipped (Keep a Changelog style).
 - **`<Feature>-Explained.md`** — a plain-English, product-manager-friendly narrative covering the
-  feature's purpose, role, and every scenario it supports, with examples and Mermaid diagrams.
+  feature's purpose, role, and every scenario it supports, with examples plus architecture/process
+  diagram PNGs when the implementation changed architecture or workflow.
+
+When applicable, the command uses the `architecture-diagram` and `process-flow-diagram` skills to
+generate source HTML under `docs/<feature-slug>/assets/diagrams/`, exports PNGs beside the source,
+embeds the PNGs in the feature-details document, and links back to the HTML sources for
+inspection/export.
 
 It then **creates or updates the pull request** for the current branch, embedding the feature-details
 narrative under the heading **"What have been developed and how to review it"** — delimited by
@@ -20,7 +26,7 @@ idempotency markers so re-runs refresh rather than duplicate.
 
 | Command               | Invocation             | Description                                                                         |
 | --------------------- | ---------------------- | ----------------------------------------------------------------------------------- |
-| `speckit.pr.generate` | `/speckit-pr-generate` | Generate the CHANGELOG + feature-details doc, then create/update the PR description |
+| `speckit.pr.generate` | `/speckit-pr-generate` | Generate the CHANGELOG + feature-details doc with diagram assets when relevant, then create/update the PR description |
 
 ## Usage
 
@@ -28,7 +34,7 @@ idempotency markers so re-runs refresh rather than duplicate.
 /speckit-pr-generate
 ```
 
-if you want to genrate the Doc but does not want to create the PR
+If you want to generate the docs but do not want to create or update the PR:
 
 ```text
 /speckit-pr-generate do not create a PR
@@ -65,5 +71,5 @@ and again manually (PR now open) is safe and expected.
 
 ## Portable equivalent
 
-A standalone Claude skill with the same name and behavior — `/speckit-pr-generate` — is available
-outside Spec Kit projects (it adds a fallback for repos without `.specify/`). Same name everywhere.
+A standalone Claude skill with the same behavior — `/devtools:pr-generate-description` — is available
+outside Spec Kit projects (it adds a fallback for repos without `.specify/`).

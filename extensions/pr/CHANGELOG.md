@@ -3,6 +3,15 @@
 All notable changes to the Detailed PR Generator extension.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [1.1.0] — 2026-07-04
+
+### Added
+- Architecture and process-flow diagram asset generation for PR documentation when an implementation
+  changes architecture, integrations, service boundaries, user journeys, validations, jobs, or error
+  recovery flows.
+- Source HTML and exported PNG output under `docs/<feature-slug>/assets/diagrams/`, with PNGs
+  embedded and HTML sources linked from the generated feature-details document.
+
 ## [1.0.0] — 2026-06-11
 
 ### Added

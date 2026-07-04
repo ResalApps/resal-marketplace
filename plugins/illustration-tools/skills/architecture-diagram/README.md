@@ -12,6 +12,18 @@ For step-by-step workflows that unfold in time (approval flows, runbooks, automa
 4. **You get one `.html` file** — open it in any browser. No build step, no server, no external images. Use the header toolbar to Copy / export PNG / export PDF.
 5. **You iterate in chat** — "add a Redis cache", "move auth into its own security group", "make the API tier wider" — Claude edits the same file.
 
+## Documentation automation
+
+When called by the `pr-generate-description`, `speckit.pr.generate`, `how-to-test`, or
+`speckit-document.how-to-test` workflows, this skill should produce both:
+
+- A source HTML file under the relevant feature documentation assets folder.
+- A PNG export beside it, embedded in the generated documentation with a link back to the HTML source.
+
+Only create the diagram when the implementation actually changes or clarifies architecture,
+infrastructure, service boundaries, data flow, integrations, security boundaries, deployment shape, or
+component ownership.
+
 ## How it works internally
 
 The skill is **instructions + a template**, not code. Claude reads the design system rules in [SKILL.md](SKILL.md) and applies them while editing the HTML.

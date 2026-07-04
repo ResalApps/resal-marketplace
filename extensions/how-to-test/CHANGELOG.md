@@ -1,0 +1,46 @@
+# Changelog
+
+All notable changes to the How-To-Test extension.
+
+## [1.3.0] - 2026-07-04
+
+### Added
+
+- Architecture and process-flow diagram generation for How-To-Test manuals when a completed feature
+  changes architecture, integrations, UI/user journeys, validations, jobs, or error recovery flows.
+- Diagram readiness checks in `/speckit-document.analyze-how-to-test` so missing HTML + PNG diagram
+  asset tasks are added before implementation when the plan requires them.
+- Diagram source HTML and exported PNG conventions for generated manual assets.
+
+## [1.2.0] - 2026-07-04
+
+### Changed
+
+- Renamed the manual command to `speckit-document.how-to-test`
+  (`/speckit-document.how-to-test`).
+- Renamed the readiness audit command to `speckit-document.analyze-how-to-test`
+  (`/speckit-document.analyze-how-to-test`) and fixed the spelling to `analyze`.
+
+## [1.1.0] - 2026-07-04
+
+### Added
+
+- Manual generation command to generate or update QA-facing How-To-Test manuals for completed Spec
+  Kit features.
+- Optional `after_implement` lifecycle hook for manual generation after implementation completion
+  validation and before PR handoff or human QA review.
+
+### Changed
+
+- Split the readiness audit from the manual generator so the main How-To-Test command maps to the
+  actual manual generation workflow.
+
+## [1.0.0] - 2026-07-04
+
+### Added
+
+- Initial readiness audit for missing E2E, screenshot-capture, API sample, and
+  documentation-readiness tasks.
+- Optional `after_tasks` lifecycle hook, recommended because task generation is complete and
+  implementation has not started.
+- Idempotent task-update rules for adding coverage tasks without duplicating existing work.

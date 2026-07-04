@@ -39,6 +39,13 @@ Iterate in chat — "add a Redis cache", "add a rejection branch from step 3", "
 - **Built-in export toolbar** — a collapsible `⋯` menu with 📋 Copy (PNG to clipboard), 🖼️ PNG download, and 📄 PDF (dark-theme-preserving). Powered by `html2canvas@1.4.1` and `jspdf@2.5.2`, both pinned with Subresource Integrity hashes.
 - **Consistent, professional styling** — semantic colors so every diagram reads the same way across the team.
 
+## Documentation automation
+
+The `devtools` PR and How-To-Test workflows can invoke these skills when a feature changes
+architecture or process flow. In that mode the skills generate source HTML and an exported PNG, place
+the assets under the feature documentation folder, then embed the PNG and link the HTML source from
+the generated documentation.
+
 ## How it works
 
 Each skill is **instructions + a template**, not a program. Claude reads the design system in the skill's `SKILL.md`, copies `resources/template.html`, and customizes it for your description. Reference outputs live under each skill's `examples/`. For the internals and customization guide, see the per-skill READMEs linked above.

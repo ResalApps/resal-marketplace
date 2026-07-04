@@ -12,6 +12,18 @@ For non-sequential system relationships (components, infrastructure, cloud topol
 4. **You get one `.html` file** — open it in any browser. Use the header toolbar to Copy / export PNG / export PDF.
 5. **You iterate in chat** — "add a rejection branch from step 3", "make step 2 automated", "wrap this to a second row" — Claude edits the same file.
 
+## Documentation automation
+
+When called by the `pr-generate-description`, `speckit.pr.generate`, `how-to-test`, or
+`speckit-document.how-to-test` workflows, this skill should produce both:
+
+- A source HTML file under the relevant feature documentation assets folder.
+- A PNG export beside it, embedded in the generated documentation with a link back to the HTML source.
+
+Only create the diagram when the implementation actually changes or clarifies a user journey,
+approval process, automation sequence, validation flow, background job, integration handoff, or error
+recovery path.
+
 ## How it works internally
 
 The skill is **instructions + a template**, not code. Claude reads the design system and layout math in [SKILL.md](SKILL.md) and applies them while editing the HTML.

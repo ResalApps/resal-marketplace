@@ -21,7 +21,7 @@ Generate polished, dark-themed technical diagrams as **self-contained HTML files
 | **Skills** | `architecture-diagram`, `process-flow-diagram` |
 | **Commands** | `/illustration-tools:architecture-diagram`, `/illustration-tools:process-flow-diagram` |
 | **Triggers** | "architecture diagram", "system/infrastructure/cloud/network diagram", "process flow", "workflow diagram", "approval flow", "automation sequence" |
-| **Output** | A single self-contained `.html` file (inline SVG, embedded CSS) |
+| **Output** | A single self-contained `.html` file (inline SVG, embedded CSS), with PNG/PDF export available from the toolbar |
 | **Source** | Local |
 
 ## What It Does
@@ -34,6 +34,10 @@ Two complementary skills, one design language:
 | **`process-flow-diagram`** | Sequential workflows — approval flows, automation pipelines, runbooks, onboarding, decision trees | Numbered step boxes, decision diamonds, ordered/labeled arrows |
 
 Both produce a dark-themed (`#020617` slate-950), JetBrains-Mono, semantically color-coded diagram with a built-in export toolbar — so diagrams from anyone on the team read the same way.
+
+The `devtools` PR and How-To-Test workflows can also call these skills automatically when a feature
+changes architecture or process flow. The generated documentation stores the diagram HTML source and
+an exported PNG beside the feature docs, embeds the PNG, and links back to the editable HTML source.
 
 ## Prerequisites
 

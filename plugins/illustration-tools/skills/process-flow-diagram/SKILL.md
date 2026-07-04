@@ -1,13 +1,13 @@
 ---
 name: process-flow-diagram
-description: Create polished dark-themed process flow diagrams as self-contained HTML+SVG files. Use when the user asks for workflow diagrams, process maps, approval flows, or automation sequences.
+description: Create polished dark-themed process flow diagrams as self-contained HTML+SVG files with PNG/PDF export. Use when the user asks for workflow diagrams, process maps, approval flows, automation sequences, or when PR/How-To-Test documentation needs process visuals.
 ---
 
 # Process Flow Diagram Skill
 
 Create professional process flow diagrams as self-contained HTML files with inline SVG graphics and CSS styling. Optimized for linear, sequential workflows with clear step progression — manual steps, automated steps, integrations, and decision branches.
 
-> **Version 1.1** · MIT License · Part of the Resal `illustration-tools` plugin
+> **Version 1.2** · MIT License · Part of the Resal `illustration-tools` plugin
 
 ## When to Use
 
@@ -212,6 +212,29 @@ Always produce a single self-contained `.html` file with:
 - Two CDN scripts for the export toolbar (html2canvas, jsPDF) — both pinned with SRI hashes
 
 The file should render correctly when opened directly in any modern browser.
+
+## Documentation Integration
+
+When this skill is invoked by documentation automation such as `pr-generate-description`,
+`speckit.pr.generate`, `how-to-test`, or `speckit-document.how-to-test`, generate both a source HTML
+diagram and an exported PNG image:
+
+- **Source HTML:** write to the feature documentation assets folder, for example
+  `docs/<feature-slug>/assets/diagrams/<feature-slug>-process-flow.html` or
+  `<how-to-test-root>/assets/<parent-feature>/<feature-slug>-process-flow.html`.
+- **PNG export:** render the HTML and export a PNG beside the source, for example
+  `<feature-slug>-process-flow.png`. Use the built-in html2canvas export path when running in a
+  browser, or automate an equivalent screenshot of `#report-container` with Playwright/Puppeteer
+  when available.
+- **Embedding:** generated Markdown or HTML docs must embed the PNG and link to the HTML source for
+  inspection/export. Use descriptive alt text that names the feature and user/system workflow.
+- **Grounding:** only generate this diagram when the feature changes or clarifies a user journey,
+  approval flow, automation sequence, background job lifecycle, integration sequence, validation
+  flow, or exception path. If no process impact is found, explicitly omit the diagram instead of
+  inventing one.
+- **Fallback:** if PNG export tooling is unavailable, keep the HTML source, add a clear note in the
+  generated documentation that the PNG export is pending, and report the follow-up. Do not silently
+  embed a broken image.
 
 ## Quality Assurance — Preview & Fix
 

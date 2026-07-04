@@ -12,15 +12,15 @@ lifecycle.
 
 | Command | Invocation | Description |
 |---|---|---|
-| `speckit-document.how-to-test` | `/speckit-document.how-to-test` | Generate or update the QA-facing How-To-Test manual with diagram assets when relevant for the completed active feature |
-| `speckit-document.analyze-how-to-test` | `/speckit-document.analyze-how-to-test` | Add missing E2E/API/screenshot/diagram readiness tasks to the active feature `tasks.md` |
+| `speckit.how-to-test.document` | `/speckit-how-to-test-document` | Generate or update the QA-facing How-To-Test manual with diagram assets when relevant for the completed active feature |
+| `speckit.how-to-test.analyze` | `/speckit-how-to-test-analyze` | Add missing E2E/API/screenshot/diagram readiness tasks to the active feature `tasks.md` |
 
 ## Usage
 
 ```text
-/speckit-document.how-to-test
-/speckit-document.how-to-test --feature specs/006-user-management
-/speckit-document.analyze-how-to-test --report-only
+/speckit-how-to-test-document
+/speckit-how-to-test-document --feature specs/006-user-management
+/speckit-how-to-test-analyze --report-only
 ```
 
 ## Lifecycle Hooks
@@ -29,13 +29,13 @@ Recommended manual-generation phase: `after_implement`.
 
 That is the best supported phase in this repo's Spec Kit lifecycle because implementation completion
 validation has finished. If a target project has an implementation-review hook, run
-`/speckit-document.how-to-test` after that review; otherwise run it at `after_implement` before PR handoff or
+`/speckit-how-to-test-document` after that review; otherwise run it at `after_implement` before PR handoff or
 human QA review.
 
 ```yaml
 hooks:
   after_implement:
-    command: speckit-document.how-to-test
+    command: speckit.how-to-test.document
     optional: true
 ```
 
@@ -48,7 +48,7 @@ implement with the feature.
 ```yaml
 hooks:
   after_tasks:
-    command: speckit-document.analyze-how-to-test
+    command: speckit.how-to-test.analyze
     optional: true
 ```
 

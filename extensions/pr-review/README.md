@@ -4,20 +4,20 @@ Process GitHub pull request review comments from Spec Kit with the same approval
 the `devtools:pr-review` Claude skill.
 
 The Claude skill remains available outside Spec Kit projects. This extension adds the Spec Kit
-command `/speckit-pr-review`.
+command `/speckit-pr-review-process`.
 
 ## Command
 
 | Command | Invocation | Description |
 |---|---|---|
-| `speckit.pr-review` | `/speckit-pr-review` | Process unresolved PR review feedback through a classify, approve, fix/reply, push, and resolve workflow |
+| `speckit.pr-review.process` | `/speckit-pr-review-process` | Process unresolved PR review feedback through a classify, approve, fix/reply, push, and resolve workflow |
 
 ## Usage
 
 ```text
-/speckit-pr-review 123
-/speckit-pr-review https://github.com/owner/repo/pull/123
-/speckit-pr-review owner/repo#123
+/speckit-pr-review-process 123
+/speckit-pr-review-process https://github.com/owner/repo/pull/123
+/speckit-pr-review-process owner/repo#123
 ```
 
 If no PR is supplied, the command tries to detect the PR for the current branch using `gh pr view`.

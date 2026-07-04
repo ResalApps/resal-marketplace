@@ -37,7 +37,7 @@ Processes review feedback on a GitHub pull request. The skill gathers unresolved
 Use it when you have a PR URL, PR number, or `owner/repo#number` and want to systematically handle reviewer feedback before merging.
 
 The skill remains available outside Spec Kit. Inside Spec Kit, use the equivalent `pr-review`
-extension command `/speckit-pr-review`.
+extension command `/speckit-pr-review-process`.
 
 ### how-to-test
 
@@ -59,7 +59,7 @@ images, and embed/reference those visuals in the How-To-Test manual.
 Use it when a feature/spec implementation is complete and you need a QA test guide. Triggers on "generate a how-to-test guide", "QA test manual", "how do I test this feature".
 
 The skill remains available outside Spec Kit. Inside Spec Kit, use the equivalent `how-to-test`
-extension command `/speckit-document.how-to-test`, with `/speckit-document.analyze-how-to-test` for the early readiness
+extension command `/speckit-how-to-test-document`, with `/speckit-how-to-test-analyze` for the early readiness
 audit.
 
 ### resal-standards-review

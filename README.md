@@ -56,8 +56,8 @@ Claude Code `/plugin` system. Full guide: [`extensions/README.md`](extensions/RE
 | Extension             | ID   | Command                | What it does                                                                                                                                                      |
 | --------------------- | ---- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Detailed PR Generator | `pr` | `/speckit-pr-generate` | Generates a **CHANGELOG** + plain-English **feature-details** doc with architecture/process diagram assets when relevant, then creates/updates the PR description under "What have been developed and how to review it". |
-| How-To-Test | `how-to-test` | `/speckit-document.how-to-test` | Generates QA-facing How-To-Test manuals after implementation, with `/speckit-document.analyze-how-to-test` for pre-implementation E2E/API/screenshot/diagram readiness. |
-| PR Review Processor | `pr-review` | `/speckit-pr-review` | Processes GitHub PR review comments through an approval-gated classify, fix/reply, push, and resolve workflow. |
+| How-To-Test | `how-to-test` | `/speckit-how-to-test-document` | Generates QA-facing How-To-Test manuals after implementation, with `/speckit-how-to-test-analyze` for pre-implementation E2E/API/screenshot/diagram readiness. |
+| PR Review Processor | `pr-review` | `/speckit-pr-review-process` | Processes GitHub PR review comments through an approval-gated classify, fix/reply, push, and resolve workflow. |
 
 ### Install (requires the `specify` CLI and a `.specify/` project)
 
@@ -108,12 +108,12 @@ capability is available as the `/devtools:pr-generate-description` plugin skill 
 
 ### Use the `how-to-test` extension
 
-After install the command is available as `/speckit-document.how-to-test`:
+After install the command is available as `/speckit-how-to-test-document`:
 
 ```bash
-/speckit-document.how-to-test
-/speckit-document.how-to-test --feature specs/006-user-management
-/speckit-document.analyze-how-to-test --report-only
+/speckit-how-to-test-document
+/speckit-how-to-test-document --feature specs/006-user-management
+/speckit-how-to-test-analyze --report-only
 ```
 
 It registers an **optional** `after_implement` hook for generating the manual once implementation
@@ -123,12 +123,12 @@ documentation-readiness tasks before implementation starts.
 
 ### Use the `pr-review` extension
 
-After install the command is available as `/speckit-pr-review`:
+After install the command is available as `/speckit-pr-review-process`:
 
 ```bash
-/speckit-pr-review 123
-/speckit-pr-review https://github.com/owner/repo/pull/123
-/speckit-pr-review owner/repo#123
+/speckit-pr-review-process 123
+/speckit-pr-review-process https://github.com/owner/repo/pull/123
+/speckit-pr-review-process owner/repo#123
 ```
 
 It is intentionally manual rather than lifecycle-hooked, because it should run after reviewers or

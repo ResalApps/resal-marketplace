@@ -179,7 +179,7 @@ The file should render correctly when opened directly in any modern browser. The
 ## Documentation Integration
 
 When this skill is invoked by documentation automation such as `pr-generate-description`,
-`speckit.pr.generate`, `how-to-test`, or `speckit-document.how-to-test`, generate both a source HTML
+`speckit.pr.generate`, `how-to-test`, or `speckit.how-to-test.document`, generate both a source HTML
 diagram and an exported PNG image:
 
 - **Source HTML:** write to the feature documentation assets folder, for example

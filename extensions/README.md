@@ -7,8 +7,8 @@ lifecycle (`/speckit.*` workflow) — distinct from the Claude Code **plugins** 
 | Extension | ID | Command | Description |
 |-----------|----|---------|-------------|
 | Detailed PR Generator | `pr` | `/speckit-pr-generate` | Generate a feature **CHANGELOG** + plain-English **feature-details** doc, include architecture/process diagram assets when relevant, then create/update the PR description under "What have been developed and how to review it". Optional `after_implement` hook. |
-| How-To-Test | `how-to-test` | `/speckit-document.how-to-test` | Generate QA-facing How-To-Test manuals after implementation, including diagram assets, screenshots, and API samples, with `/speckit-document.analyze-how-to-test` for pre-implementation E2E/API/screenshot/diagram readiness. Optional `after_implement` and `after_tasks` hooks. |
-| PR Review Processor | `pr-review` | `/speckit-pr-review` | Process GitHub PR review comments through an approval-gated classify, fix/reply, push, and resolve workflow. Manual command. |
+| How-To-Test | `how-to-test` | `/speckit-how-to-test-document` | Generate QA-facing How-To-Test manuals after implementation, including diagram assets, screenshots, and API samples, with `/speckit-how-to-test-analyze` for pre-implementation E2E/API/screenshot/diagram readiness. Optional `after_implement` and `after_tasks` hooks. |
+| PR Review Processor | `pr-review` | `/speckit-pr-review-process` | Process GitHub PR review comments through an approval-gated classify, fix/reply, push, and resolve workflow. Manual command. |
 
 ## Installing an extension
 
@@ -112,19 +112,19 @@ PNG diagram assets through the `architecture-diagram` and `process-flow-diagram`
 
 ## Using the `how-to-test` extension
 
-After install, the manual command is available as `/speckit-document.how-to-test`. It registers an
+After install, the manual command is available as `/speckit-how-to-test-document`. It registers an
 **optional** `after_implement` hook, which is the recommended supported phase because implementation
 completion validation has passed. If a target project has a review hook, run it after that review;
 otherwise run it before PR handoff or human QA review.
 
-The same extension also provides `/speckit-document.analyze-how-to-test` as an **optional** `after_tasks`
+The same extension also provides `/speckit-how-to-test-analyze` as an **optional** `after_tasks`
 readiness hook for missing E2E/API/screenshot/diagram tasks. See [`how-to-test/README.md`](how-to-test/README.md).
 The readiness hook now also looks for missing diagram-generation tasks when architecture or workflow
 changes need documentation visuals.
 
 ## Using the `pr-review` extension
 
-After install, the command is available as `/speckit-pr-review`. It is intentionally manual, because
+After install, the command is available as `/speckit-pr-review-process`. It is intentionally manual, because
 PR review comments only exist after reviewers or bots leave feedback on an open PR. The
 `/devtools:pr-review` skill remains available for the same workflow outside Spec Kit. See
 [`pr-review/README.md`](pr-review/README.md).

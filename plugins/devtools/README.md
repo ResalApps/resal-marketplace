@@ -26,7 +26,7 @@ Install from the Resal marketplace:
 ```
 
 This skill remains available for non-Spec Kit projects. The Spec Kit equivalent is the
-`pr-review` extension command `/speckit-pr-review`.
+`pr-review` extension command `/speckit-pr-review-process`.
 
 ### how-to-test
 
@@ -44,7 +44,7 @@ When the implementation changed architecture or workflow behavior, it also uses 
 PNG images, and embed/reference those visuals in the manual.
 
 This skill remains available for non-Spec Kit projects. The Spec Kit equivalent is the `how-to-test`
-extension command `/speckit-document.how-to-test`, with `/speckit-document.analyze-how-to-test` for the early readiness
+extension command `/speckit-how-to-test-document`, with `/speckit-how-to-test-analyze` for the early readiness
 audit.
 
 ### resal-standards-review

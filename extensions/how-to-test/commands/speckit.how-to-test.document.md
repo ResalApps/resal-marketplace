@@ -64,7 +64,7 @@ Never invent behavior, screens, endpoints, examples, test counts, or coverage.
   draft when completion evidence is missing.
 - Check for E2E, screenshot-capture, API contract/integration, and manual smoke-test tasks in
   `tasks.md` or the workspace.
-- If important coverage is missing, report it and suggest running `/speckit-document.analyze-how-to-test`.
+- If important coverage is missing, report it and suggest running `/speckit-how-to-test-analyze`.
   Continue only if enough evidence exists to generate an honest draft.
 
 ### 3. Scan workspace and update project memory

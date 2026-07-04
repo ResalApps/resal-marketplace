@@ -2,13 +2,22 @@
 
 All notable changes to the How-To-Test extension.
 
+## [1.3.2] - 2026-07-04
+
+### Fixed
+
+- Renamed internal Spec Kit command IDs to the valid `speckit.how-to-test.*` namespace required by
+  the `specify` extension validator.
+- Updated the documented slash commands to `/speckit-how-to-test-document` and
+  `/speckit-how-to-test-analyze`.
+
 ## [1.3.0] - 2026-07-04
 
 ### Added
 
 - Architecture and process-flow diagram generation for How-To-Test manuals when a completed feature
   changes architecture, integrations, UI/user journeys, validations, jobs, or error recovery flows.
-- Diagram readiness checks in `/speckit-document.analyze-how-to-test` so missing HTML + PNG diagram
+- Diagram readiness checks in `/speckit-how-to-test-analyze` so missing HTML + PNG diagram
   asset tasks are added before implementation when the plan requires them.
 - Diagram source HTML and exported PNG conventions for generated manual assets.
 
@@ -16,10 +25,10 @@ All notable changes to the How-To-Test extension.
 
 ### Changed
 
-- Renamed the manual command to `speckit-document.how-to-test`
-  (`/speckit-document.how-to-test`).
-- Renamed the readiness audit command to `speckit-document.analyze-how-to-test`
-  (`/speckit-document.analyze-how-to-test`) and fixed the spelling to `analyze`.
+- Renamed the manual command to `speckit.how-to-test.document`
+  (`/speckit-how-to-test-document`).
+- Renamed the readiness audit command to `speckit.how-to-test.analyze`
+  (`/speckit-how-to-test-analyze`) and fixed the spelling to `analyze`.
 
 ## [1.1.0] - 2026-07-04
 

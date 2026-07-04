@@ -233,8 +233,8 @@
         const el = document.getElementById('report-container');
         const r = el.getBoundingClientRect();
         const pad = 32;
-        const canvas = await html2canvas(document.body, { backgroundColor: '#020617', scale: 2, useCORS: true, ignoreElements: (e) => e.classList && e.classList.contains('toolbar'), x: r.left + window.scrollX - pad, y: r.top + window.scrollY - pad, width: r.width + pad * 2, height: r.height + pad * 2 });
-        const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+        const canvas = await html2canvas(document.body, { backgroundColor: '#020617', scale: 2, useCORS: true, ignoreElements: (e) => e.classList && e.classList.contains('toolbar'), x: r.left + window.scrollX - pad, y: r.top + window.scrollY - pad, width: r.width + pad * 2, height: r.height + pad * 2, scrollX: 0, scrollY: 0 });
+        const blob = await new Promise((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Canvas export failed')), 'image/png'));
         await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
         btn.textContent = '✓ Copied!';
       } catch (e) { btn.textContent = '✗ Failed'; }
@@ -246,7 +246,7 @@
         const el = document.getElementById('report-container');
         const r = el.getBoundingClientRect();
         const pad = 32;
-        const canvas = await html2canvas(document.body, { backgroundColor: '#020617', scale: 2, useCORS: true, ignoreElements: (e) => e.classList && e.classList.contains('toolbar'), x: r.left + window.scrollX - pad, y: r.top + window.scrollY - pad, width: r.width + pad * 2, height: r.height + pad * 2 });
+        const canvas = await html2canvas(document.body, { backgroundColor: '#020617', scale: 2, useCORS: true, ignoreElements: (e) => e.classList && e.classList.contains('toolbar'), x: r.left + window.scrollX - pad, y: r.top + window.scrollY - pad, width: r.width + pad * 2, height: r.height + pad * 2, scrollX: 0, scrollY: 0 });
         const link = document.createElement('a'); link.download = 'inventory-control.png'; link.href = canvas.toDataURL('image/png'); link.click();
         btn.textContent = '✓ Done!';
       } catch (e) { btn.textContent = '✗ Failed'; }
@@ -258,7 +258,7 @@
         const el = document.getElementById('report-container');
         const r = el.getBoundingClientRect();
         const pad = 32;
-        const canvas = await html2canvas(document.body, { backgroundColor: '#020617', scale: 2, useCORS: true, ignoreElements: (e) => e.classList && e.classList.contains('toolbar'), x: r.left + window.scrollX - pad, y: r.top + window.scrollY - pad, width: r.width + pad * 2, height: r.height + pad * 2 });
+        const canvas = await html2canvas(document.body, { backgroundColor: '#020617', scale: 2, useCORS: true, ignoreElements: (e) => e.classList && e.classList.contains('toolbar'), x: r.left + window.scrollX - pad, y: r.top + window.scrollY - pad, width: r.width + pad * 2, height: r.height + pad * 2, scrollX: 0, scrollY: 0 });
         const imgData = canvas.toDataURL('image/png');
         const { jsPDF } = window.jspdf;
         const orientation = canvas.width > canvas.height ? 'landscape' : 'portrait';

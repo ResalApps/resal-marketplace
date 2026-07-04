@@ -289,7 +289,7 @@ Common fixes:
 | Element overlap | Adjust x/y positions, reduce element width, or expand viewBox |
 | Arrow not connecting | Check endpoint coordinates match the target box edge (account for rx radius) |
 | Label on arrow line | Move label y-coordinate above (y-10) or below (y+12) the line |
-| Diamond edge connection | Diamond corners are at center ± ~45px on each axis |
+| Diamond edge connection | Diamond corners are at center ± ~57px on each axis for the standard 80×80 rotated diamond |
 
 ### Step 4: Re-preview if changes were made
 If you made fixes:
@@ -298,20 +298,20 @@ If you made fixes:
 
 ### Coordinate Reference Guide
 
-For a step box at position `(x, y)` with `width=140, height=105`:
+For a step box at position `(x, y)` with `width=160, height=80`:
 - **Left edge:** `x`
-- **Right edge:** `x + 140`
+- **Right edge:** `x + 160`
 - **Top edge:** `y`
-- **Bottom edge:** `y + 105`
-- **Center:** `(x + 70, y + 52)`
-- **Arrow entry (left):** `(x, y + 52)`
-- **Arrow exit (right):** `(x + 140, y + 52)`
+- **Bottom edge:** `y + 80`
+- **Center:** `(x + 80, y + 40)`
+- **Arrow entry (left):** `(x, y + 40)`
+- **Arrow exit (right):** `(x + 160, y + 40)`
 
-For a decision diamond centered at `(cx, cy)` with size 64:
-- **Left point:** `(cx - 45, cy)`
-- **Right point:** `(cx + 45, cy)`
-- **Top point:** `(cx, cy - 45)`
-- **Bottom point:** `(cx, cy + 45)`
+For a decision diamond centered at `(cx, cy)` with an 80×80 square rotated 45 degrees:
+- **Left point:** `(cx - 57, cy)`
+- **Right point:** `(cx + 57, cy)`
+- **Top point:** `(cx, cy - 57)`
+- **Bottom point:** `(cx, cy + 57)`
 
 For a pill/exit node at `(x, y)` with `width=100, height=40`:
 - **Center:** `(x + 50, y + 20)`

@@ -41,8 +41,10 @@ an exported PNG beside the feature docs, embeds the PNG, and links back to the e
 
 ## Prerequisites
 
-- None to generate. The output is a standalone HTML file that renders offline in any modern browser.
-- The **export toolbar** loads two CDN scripts (`html2canvas@1.4.1`, `jspdf@2.5.2`, both SRI-pinned), so Copy/PNG/PDF need network access the first time. The diagram itself renders without them.
+- None to generate. The output is a standalone HTML file that renders offline in any modern browser;
+  when Google Fonts is unavailable, the browser falls back to a local monospace font.
+- The **export toolbar** loads two CDN scripts (`html2canvas@1.4.1`, `jspdf@2.5.2`, both SRI-pinned),
+  so Copy/PNG/PDF need network access the first time. The diagram itself renders without them.
 - Clipboard copy needs a user gesture and a secure context (https / file / localhost).
 
 ## How to Use

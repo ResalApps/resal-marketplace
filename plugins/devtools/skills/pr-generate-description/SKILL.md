@@ -1,6 +1,6 @@
 ---
-name: speckit-pr-generate
-description: Use when finishing a feature and preparing its pull request — generates a technical CHANGELOG and a plain-English, product-manager-friendly feature-details document, then creates or updates the PR description with the feature details under the heading "What have been developed and how to review it". Trigger on "/speckit-pr-generate", "generate a detailed PR", "write the PR description", "document this feature for review", or when wrapping up a Spec Kit feature. Works with or without Spec Kit.
+name: pr-generate-description
+description: Use when finishing a feature and preparing its pull request — generates a technical CHANGELOG, a plain-English feature-details document, and architecture/process diagram assets when relevant, then creates or updates the PR description with the feature details under the heading "What have been developed and how to review it". Trigger on "/devtools:pr-generate-description", "generate a detailed PR", "write the PR description", "document this feature for review", or when wrapping up a Spec Kit feature. Works with or without Spec Kit.
 ---
 
 # Generate a Detailed PR
@@ -19,7 +19,7 @@ repositories that don't use Spec Kit.
 
 ## When to use
 
-- The user types `/speckit-pr-generate` (or `/devtools:speckit-pr-generate`), or asks to "generate a
+- The user types `/devtools:pr-generate-description`, or asks to "generate a
   detailed PR", "write the PR description", or "document this feature for review".
 - A feature/branch is implemented and you're preparing to open or finalize its PR.
 
@@ -33,7 +33,7 @@ repositories that don't use Spec Kit.
 ## Process
 
 ```
-resolve feature  ->  gather ground truth  ->  write docs/<feature>/  ->  handle the PR  ->  report
+resolve feature  ->  gather ground truth  ->  generate diagram assets  ->  write docs/<feature>/  ->  handle the PR  ->  report
 ```
 
 ### 1. Resolve the feature and its slug
@@ -62,7 +62,32 @@ If the required sections cannot be supported by sourced artifacts, write only th
 supported and explicitly mark the unsupported parts as "not sourced from repository artifacts"
 rather than inventing them.
 
-### 3. Write the two documents under `docs/<feature-slug>/`
+### 3. Generate diagram assets when the implementation changed architecture or process flow
+
+Before writing the feature documents, decide whether the implementation has architecture or process
+flow impact:
+
+- Use the `architecture-diagram` skill when the feature changes or clarifies architecture,
+  infrastructure, service boundaries, data flow, integrations, security zones, deployment topology,
+  or major component responsibilities.
+- Use the `process-flow-diagram` skill when the feature changes or clarifies a user journey,
+  approval flow, automation sequence, background job lifecycle, integration sequence, validation
+  flow, or exception path.
+
+For each applicable diagram:
+
+1. Generate the source HTML using the corresponding illustration skill's design system.
+2. Write source files under `docs/<feature-slug>/assets/diagrams/`, using names such as
+   `<feature-slug>-architecture.html` and `<feature-slug>-process-flow.html`.
+3. Export a PNG beside each HTML file, using the built-in html2canvas export path or an equivalent
+   Playwright/Puppeteer screenshot of `#report-container`, with names such as
+   `<feature-slug>-architecture.png` and `<feature-slug>-process-flow.png`.
+4. Embed the PNG in `<Feature>-Explained.md` and link to the HTML source for inspection/export.
+5. If no architecture or process impact exists, explicitly omit that diagram type. Do not invent one.
+6. If PNG export is unavailable, keep the HTML source, add a clear "PNG export pending" note in the
+   doc, and report the follow-up. Do not embed a broken image.
+
+### 4. Write the two documents under `docs/<feature-slug>/`
 
 Create the folder if needed; matching the spec/feature name keeps it wiki-ready.
 
@@ -79,24 +104,26 @@ real-world analogies welcome when they aid understanding. Define any unavoidable
 1. **Title + subtitle** and a _one-paragraph version_ (whole feature in ~4 sentences).
 2. **Why we needed this ("so what")** — the business problem, with an analogy.
 3. **The building blocks in human words** — table mapping each concept to "what it really is" + analogy.
-4. **What this feature can do — scenarios, with examples** (the heart): one numbered scenario per
+4. **Architecture and process visuals** — if generated, embed the architecture PNG and/or process
+   flow PNG with descriptive alt text, and add a nearby link to each source HTML file.
+5. **What this feature can do — scenarios, with examples** (the heart): one numbered scenario per
    capability, each with a concrete _Story_ (named actors, real numbers reused consistently), what the
-   system does, and a **Mermaid diagram** where a flow/lifecycle helps (`sequenceDiagram`,
-   `stateDiagram-v2`, `flowchart`). Cover happy paths **and** guardrails (rejections, immutability,
-   idempotency, fail-closed).
-5. **Who does what** — actors and their boundaries.
-6. **What this deliberately does NOT do** — scope boundaries.
-7. **Caveats / pending decisions** — baselines pending sign-off, open questions.
-8. **How confident should you be?** — tests/coverage/quality in plain terms (only if known).
-9. **Glossary** — plain meanings of any terms used.
+   system does, and a visual where it helps. Prefer the generated `process-flow-diagram` PNG for
+   user/system workflows. Mermaid can be used only as a lightweight fallback when no exported diagram
+   asset is available. Cover happy paths **and** guardrails (rejections, immutability, idempotency,
+   fail-closed).
+6. **Who does what** — actors and their boundaries.
+7. **What this deliberately does NOT do** — scope boundaries.
+8. **Caveats / pending decisions** — baselines pending sign-off, open questions.
+9. **How confident should you be?** — tests/coverage/quality in plain terms (only if known).
+10. **Glossary** — plain meanings of any terms used.
 
-Footer: link to `CHANGELOG.md` and the spec/design source. Prefer **Mermaid** over inline SVG (renders
-inline in most wikis, stays editable); keep Mermaid syntax valid.
+Footer: link to `CHANGELOG.md`, the spec/design source, and any diagram HTML sources.
 
 > Quality bar: a reader who has never seen the code finishes the feature-details doc knowing what the
 > feature is, why it exists, every scenario it supports, and exactly what's out of scope.
 
-### 4. Handle the pull request (unless `--no-pr`)
+### 5. Handle the pull request (unless `--no-pr`)
 
 Run this as a numbered algorithm:
 
@@ -130,10 +157,11 @@ Run this as a numbered algorithm:
    the user declines, write docs only and tell the user to re-run once the PR exists. If
    `gh pr create` fails, report the failure, keep the generated docs, and do not retry silently.
 
-### 5. Report
+### 6. Report
 
-Summarize the doc paths written, whether the PR was created/updated (with URL), and follow-ups. State
-test/coverage figures only if sourced from real artifacts.
+Summarize the doc paths written, diagram HTML/PNG assets generated, whether the PR was
+created/updated (with URL), and follow-ups. State test/coverage figures only if sourced from real
+artifacts.
 
 ## Idempotency
 

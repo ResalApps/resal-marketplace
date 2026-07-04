@@ -31,7 +31,7 @@ Optional flags the user may pass:
 ## Behavior Overview
 
 ```
-resolve feature  ->  gather ground truth  ->  write docs/<feature>/  ->  handle the PR  ->  report
+resolve feature  ->  gather ground truth  ->  generate diagram assets  ->  write docs/<feature>/  ->  handle the PR  ->  report
 ```
 
 ## Instructions
@@ -55,12 +55,37 @@ Read whatever exists for the feature so all generated content traces to real art
 
 If something is unknown, **omit it** — do not fabricate test counts, coverage, issue numbers, or behavior.
 
-### 3. Write the two documents under `docs/<feature-slug>/`
+### 3. Generate diagram assets when the implementation changed architecture or process flow
+
+Before writing the feature documents, decide whether the implementation has architecture or process
+flow impact:
+
+- Use the `architecture-diagram` skill when the feature changes or clarifies architecture,
+  infrastructure, service boundaries, data flow, integrations, security zones, deployment topology,
+  or major component responsibilities.
+- Use the `process-flow-diagram` skill when the feature changes or clarifies a user journey,
+  approval flow, automation sequence, background job lifecycle, integration sequence, validation
+  flow, or exception path.
+
+For each applicable diagram:
+
+1. Generate the source HTML using the corresponding illustration skill's design system.
+2. Write source files under `docs/<feature-slug>/assets/diagrams/`, using names such as
+   `<feature-slug>-architecture.html` and `<feature-slug>-process-flow.html`.
+3. Export a PNG beside each HTML file, using the built-in html2canvas export path or an equivalent
+   Playwright/Puppeteer screenshot of `#report-container`, with names such as
+   `<feature-slug>-architecture.png` and `<feature-slug>-process-flow.png`.
+4. Embed the PNG in `<Feature>-Explained.md` and link to the HTML source for inspection/export.
+5. If no architecture or process impact exists, explicitly omit that diagram type. Do not invent one.
+6. If PNG export is unavailable, keep the HTML source, add a clear "PNG export pending" note in the
+   doc, and report the follow-up. Do not embed a broken image.
+
+### 4. Write the two documents under `docs/<feature-slug>/`
 
 Create the folder if needed. The folder name **matches the spec folder name** so it can drop into a
 wiki cleanly.
 
-#### 3a. `docs/<feature-slug>/CHANGELOG.md`
+#### 4a. `docs/<feature-slug>/CHANGELOG.md`
 
 A [Keep a Changelog](https://keepachangelog.com/)–style technical record. Header block with spec
 path, branch, tracking issue/PR (if known), and what it builds on. Then a single dated version
@@ -68,7 +93,7 @@ section grouping changes under: **Added**, **Changed**, **Architecture & boundar
 **Migration** (if relevant), **Tests & quality**, **Scope (not in this phase)**, **Open items**.
 Be concrete and accurate; map functional requirements / acceptance criteria to what shipped.
 
-#### 3b. `docs/<feature-slug>/<Feature>-Explained.md`
+#### 4b. `docs/<feature-slug>/<Feature>-Explained.md`
 
 The **plain-English, business/PM-facing narrative**. Audience: a product manager or commercial
 stakeholder, *not* an engineer. Friendly and descriptive; light humor and real-world analogies are
@@ -79,26 +104,25 @@ structure (scale each section to the feature — skip what doesn't apply):
 2. **Why we needed this ("so what")** — the business problem, ideally with an analogy.
 3. **The building blocks in human words** — a small table mapping each core concept to "what it
    really is" and a real-world analogy.
-4. **What this feature can do — the scenarios, with examples** — the heart of the doc. One numbered
+4. **Architecture and process visuals** — if generated, embed the architecture PNG and/or process
+   flow PNG with descriptive alt text, and add a nearby link to each source HTML file.
+5. **What this feature can do — the scenarios, with examples** — the heart of the doc. One numbered
    scenario per capability, each with: a short *Story* (concrete, named actors, real numbers reused
-   consistently), what the system does, and a **Mermaid diagram** where a flow or lifecycle helps
-   (`sequenceDiagram` for flows, `stateDiagram-v2` for lifecycles, `flowchart` for actor/role maps).
-   Cover the happy paths **and** the guardrails (rejections, immutability, idempotency, fail-closed).
-5. **Who does what** — the cast of actors and their boundaries.
-6. **What this phase deliberately does NOT do** — scope boundaries, to set expectations.
-7. **Caveats / pending decisions** — anything flagged as baseline-pending-sign-off or an open question.
-8. **How confident should you be?** — summarize tests/coverage/quality in plain terms (only if known).
-9. **Glossary** — plain meanings of any terms that appeared.
+   consistently), what the system does, and a visual where it helps. Prefer the generated
+   `process-flow-diagram` PNG for user/system workflows. Mermaid can be used only as a lightweight
+   fallback when no exported diagram asset is available.
+6. **Who does what** — the cast of actors and their boundaries.
+7. **What this phase deliberately does NOT do** — scope boundaries, to set expectations.
+8. **Caveats / pending decisions** — anything flagged as baseline-pending-sign-off or an open question.
+9. **How confident should you be?** — summarize tests/coverage/quality in plain terms (only if known).
+10. **Glossary** — plain meanings of any terms that appeared.
 
-Footer: link back to `CHANGELOG.md` and the `specs/<feature-slug>/` spec.
-
-Prefer **Mermaid** over inline SVG — it renders inline in GitHub/Azure DevOps/most wikis and stays
-editable. Keep Mermaid syntax valid (quote labels containing punctuation; one node/edge per line).
+Footer: link back to `CHANGELOG.md`, the `specs/<feature-slug>/` spec, and any diagram HTML sources.
 
 > Quality bar: a reader who has never seen the code should finish the feature-details doc knowing
 > what the feature is, why it exists, every scenario it supports, and exactly what's out of scope.
 
-### 4. Handle the pull request
+### 5. Handle the pull request
 
 Unless `--no-pr` was passed:
 
@@ -128,11 +152,11 @@ Unless `--no-pr` was passed:
   - Without `--create-pr`, **ask** the user whether to create the PR now. If they decline, write the
     docs only and tell them to re-run (or run `/speckit-pr-generate`) once the PR exists.
 
-### 5. Report
+### 6. Report
 
-Summarize: the doc paths written, whether the PR was created or updated (with its URL), and any
-follow-ups (e.g. "no PR yet — re-run after opening one"). State test/coverage figures only if you
-sourced them from real artifacts.
+Summarize: the doc paths written, diagram HTML/PNG assets generated, whether the PR was created or
+updated (with its URL), and any follow-ups (e.g. "no PR yet — re-run after opening one"). State
+test/coverage figures only if you sourced them from real artifacts.
 
 ## Idempotency
 

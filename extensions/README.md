@@ -6,7 +6,9 @@ lifecycle (`/speckit.*` workflow) — distinct from the Claude Code **plugins** 
 
 | Extension | ID | Command | Description |
 |-----------|----|---------|-------------|
-| Detailed PR Generator | `pr` | `/speckit-pr-generate` | Generate a feature **CHANGELOG** + plain-English **feature-details** doc, then create/update the PR description under "What have been developed and how to review it". Optional `after_implement` hook. |
+| Detailed PR Generator | `pr` | `/speckit-pr-generate` | Generate a feature **CHANGELOG** + plain-English **feature-details** doc, include architecture/process diagram assets when relevant, then create/update the PR description under "What have been developed and how to review it". Optional `after_implement` hook. |
+| How-To-Test | `how-to-test` | `/speckit-document.how-to-test` | Generate QA-facing How-To-Test manuals after implementation, including diagram assets, screenshots, and API samples, with `/speckit-document.analyze-how-to-test` for pre-implementation E2E/API/screenshot/diagram readiness. Optional `after_implement` and `after_tasks` hooks. |
+| PR Review Processor | `pr-review` | `/speckit-pr-review` | Process GitHub PR review comments through an approval-gated classify, fix/reply, push, and resolve workflow. Manual command. |
 
 ## Installing an extension
 
@@ -38,6 +40,8 @@ You need the `specify` CLI and a Spec Kit project (a `.specify/` directory).
 
    ```bash
    specify extension add pr
+   specify extension add how-to-test
+   specify extension add pr-review
    ```
 
    > Requires both a catalog URL that `specify` can fetch over unauthenticated HTTPS and a
@@ -82,6 +86,8 @@ PowerShell example from a local Windows clone:
 
 ```powershell
 specify extension add --dev "D:\Projects\Resal\resal-marketplace\extensions\pr"
+specify extension add --dev "D:\Projects\Resal\resal-marketplace\extensions\how-to-test"
+specify extension add --dev "D:\Projects\Resal\resal-marketplace\extensions\pr-review"
 ```
 
 > ⚠️ Never run `specify extension add --dev` against a path that is already inside the target
@@ -100,6 +106,28 @@ After install, the command is available as `/speckit-pr-generate`. It registers 
 `after_implement` hook (Spec Kit prompts before running it), and can be run manually anytime —
 typically once the PR exists, to inject the feature-details into its description. See
 [`pr/README.md`](pr/README.md).
+
+When the implementation changed architecture or process flow, the command also generates HTML and
+PNG diagram assets through the `architecture-diagram` and `process-flow-diagram` skills.
+
+## Using the `how-to-test` extension
+
+After install, the manual command is available as `/speckit-document.how-to-test`. It registers an
+**optional** `after_implement` hook, which is the recommended supported phase because implementation
+completion validation has passed. If a target project has a review hook, run it after that review;
+otherwise run it before PR handoff or human QA review.
+
+The same extension also provides `/speckit-document.analyze-how-to-test` as an **optional** `after_tasks`
+readiness hook for missing E2E/API/screenshot/diagram tasks. See [`how-to-test/README.md`](how-to-test/README.md).
+The readiness hook now also looks for missing diagram-generation tasks when architecture or workflow
+changes need documentation visuals.
+
+## Using the `pr-review` extension
+
+After install, the command is available as `/speckit-pr-review`. It is intentionally manual, because
+PR review comments only exist after reviewers or bots leave feedback on an open PR. The
+`/devtools:pr-review` skill remains available for the same workflow outside Spec Kit. See
+[`pr-review/README.md`](pr-review/README.md).
 
 ## Publishing (maintainers)
 

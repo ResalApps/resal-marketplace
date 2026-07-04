@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spec Kit Flow</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #f5f5f5;
+      --paper-2: #ececec;
+      --ink: #2d3142;
+      --muted: #4f5d75;
+      --soft: #7a8399;
+      --rule: rgba(45, 49, 66, 0.12);
+      --rule-solid: #bfc0c0;
+      --accent: #eb6c36;
+      --accent-tint: rgba(235, 108, 54, 0.08);
+      --link: #2e5aa8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "Geist", system-ui, sans-serif;
+    }
+
+    main {
+      width: min(1080px, calc(100vw - 32px));
+      margin: 40px auto 32px;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--soft);
+      font-family: "Geist Mono", ui-monospace, monospace;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      color: var(--ink);
+      font-family: "Instrument Serif", Georgia, serif;
+      font-size: clamp(32px, 4vw, 48px);
+      font-weight: 400;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 760px;
+      margin: 0 0 28px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    .diagram-wrap {
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      min-width: 880px;
+      height: auto;
+    }
+
+    .node-name {
+      font-family: "Geist", system-ui, sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      fill: var(--ink);
+      text-anchor: middle;
+    }
+
+    .node-sub {
+      font-family: "Geist Mono", ui-monospace, monospace;
+      font-size: 8px;
+      fill: var(--muted);
+      text-anchor: middle;
+    }
+
+    .tag {
+      font-family: "Geist Mono", ui-monospace, monospace;
+      font-size: 8px;
+      font-weight: 500;
+      fill: var(--soft);
+      text-anchor: middle;
+      letter-spacing: 0.08em;
+    }
+
+    .arrow-label {
+      font-family: "Geist Mono", ui-monospace, monospace;
+      font-size: 8px;
+      fill: var(--soft);
+      text-anchor: middle;
+      letter-spacing: 0.06em;
+    }
+
+    .legend-text {
+      font-family: "Geist Mono", ui-monospace, monospace;
+      font-size: 8px;
+      fill: var(--muted);
+      letter-spacing: 0.12em;
+    }
+
+    footer {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--rule);
+      color: var(--soft);
+      font-family: "Geist Mono", ui-monospace, monospace;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="eyebrow">Spec Kit Workflow</p>
+    <h1>How Speckit Flow Works</h1>
+    <p class="subtitle">
+      Core Spec Kit commands turn an idea into feature artifacts, task slices, implementation, and review handoff.
+      Resal extensions add QA readiness, How-To-Test docs, PR details, and PR review processing at the lifecycle edges.
+    </p>
+
+    <div class="diagram-wrap" aria-label="Flowchart showing the Spec Kit workflow">
+      <svg viewBox="0 0 960 1120" role="img" aria-labelledby="title desc">
+        <title id="title">Spec Kit Flow</title>
+        <desc id="desc">A flowchart from feature idea through specify, clarify, plan, tasks, readiness audit, implement, and review handoff.</desc>
+
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#4f5d75"></polygon>
+          </marker>
+          <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#eb6c36"></polygon>
+          </marker>
+          <marker id="arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#2e5aa8"></polygon>
+          </marker>
+        </defs>
+
+        <rect width="960" height="1120" fill="#f5f5f5"></rect>
+
+        <!-- Arrows -->
+        <path d="M480 120 L480 156" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"></path>
+        <path d="M480 236 L480 260" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"></path>
+        <path d="M480 372 L480 436" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"></path>
+        <rect x="464" y="400" width="32" height="12" rx="2" fill="#f5f5f5"></rect>
+        <text x="480" y="408" class="arrow-label">NO</text>
+
+        <path d="M632 316 L672 316" fill="none" stroke="#2e5aa8" stroke-width="1.2" marker-end="url(#arrow-link)"></path>
+        <rect x="640" y="300" width="28" height="12" rx="2" fill="#f5f5f5"></rect>
+        <text x="654" y="308" class="arrow-label">YES</text>
+
+        <path d="M784 356 L784 404 L632 404 L632 436" fill="none" stroke="#2e5aa8" stroke-width="1.2" marker-end="url(#arrow-link)"></path>
+        <rect x="684" y="392" width="88" height="12" rx="2" fill="#f5f5f5"></rect>
+        <text x="728" y="400" class="arrow-label">SPEC UPDATED</text>
+
+        <path d="M480 524 L480 576" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"></path>
+        <path d="M480 656 L480 704" fill="none" stroke="#4f5d75" stroke-width="1.2" stroke-dasharray="5 4" marker-end="url(#arrow)"></path>
+        <rect x="432" y="676" width="96" height="12" rx="2" fill="#f5f5f5"></rect>
+        <text x="480" y="684" class="arrow-label">AFTER_TASKS</text>
+
+        <path d="M480 788 L480 836" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"></path>
+        <path d="M480 920 L480 964" fill="none" stroke="#eb6c36" stroke-width="1.2" marker-end="url(#arrow-accent)"></path>
+        <rect x="424" y="936" width="112" height="12" rx="2" fill="#f5f5f5"></rect>
+        <text x="480" y="944" class="arrow-label">AFTER_IMPLEMENT</text>
+
+        <!-- Start -->
+        <rect x="360" y="56" width="240" height="64" rx="32" fill="#f5f5f5"></rect>
+        <rect x="360" y="56" width="240" height="64" rx="32" fill="rgba(79, 93, 117, 0.10)" stroke="#7a8399" stroke-width="1"></rect>
+        <text x="480" y="84" class="node-name">Feature Idea</text>
+        <text x="480" y="100" class="node-sub">plain-language request</text>
+
+        <!-- Specify -->
+        <rect x="328" y="156" width="304" height="80" rx="6" fill="#f5f5f5"></rect>
+        <rect x="328" y="156" width="304" height="80" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"></rect>
+        <rect x="344" y="168" width="44" height="16" rx="2" fill="transparent" stroke="rgba(45,49,66,0.40)" stroke-width="0.8"></rect>
+        <text x="366" y="180" class="tag">CORE</text>
+        <text x="480" y="192" class="node-name">/speckit.specify</text>
+        <text x="480" y="208" class="node-sub">branch + specs/&lt;feature&gt;/spec.md</text>
+
+        <!-- Decision -->
+        <polygon points="480 260 632 316 480 372 328 316" fill="#f5f5f5"></polygon>
+        <polygon points="480 260 632 316 480 372 328 316" fill="#ffffff" stroke="#2d3142" stroke-width="1"></polygon>
+        <text x="480" y="312" class="node-name">Spec clear?</text>
+        <text x="480" y="328" class="node-sub">requirements gate</text>
+
+        <!-- Clarify -->
+        <rect x="672" y="276" width="224" height="80" rx="6" fill="#f5f5f5"></rect>
+        <rect x="672" y="276" width="224" height="80" rx="6" fill="rgba(45,49,66,0.02)" stroke="rgba(45,49,66,0.35)" stroke-width="1" stroke-dasharray="4 3"></rect>
+        <rect x="688" y="288" width="52" height="16" rx="2" fill="transparent" stroke="rgba(45,49,66,0.30)" stroke-width="0.8"></rect>
+        <text x="714" y="300" class="tag">CHECK</text>
+        <text x="784" y="312" class="node-name">/speckit.clarify</text>
+        <text x="784" y="328" class="node-sub">resolve open questions</text>
+
+        <!-- Plan -->
+        <rect x="328" y="436" width="304" height="88" rx="6" fill="#f5f5f5"></rect>
+        <rect x="328" y="436" width="304" height="88" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"></rect>
+        <rect x="344" y="448" width="44" height="16" rx="2" fill="transparent" stroke="rgba(45,49,66,0.40)" stroke-width="0.8"></rect>
+        <text x="366" y="460" class="tag">CORE</text>
+        <text x="480" y="472" class="node-name">/speckit.plan</text>
+        <text x="480" y="488" class="node-sub">plan, research, model</text>
+        <text x="480" y="500" class="node-sub">contracts, quickstart</text>
+
+        <!-- Tasks -->
+        <rect x="328" y="576" width="304" height="80" rx="6" fill="#f5f5f5"></rect>
+        <rect x="328" y="576" width="304" height="80" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"></rect>
+        <rect x="344" y="588" width="44" height="16" rx="2" fill="transparent" stroke="rgba(45,49,66,0.40)" stroke-width="0.8"></rect>
+        <text x="366" y="600" class="tag">CORE</text>
+        <text x="480" y="612" class="node-name">/speckit.tasks</text>
+        <text x="480" y="628" class="node-sub">story-sliced tasks.md</text>
+
+        <!-- Readiness audit -->
+        <rect x="328" y="704" width="304" height="84" rx="6" fill="#f5f5f5"></rect>
+        <rect x="328" y="704" width="304" height="84" rx="6" fill="rgba(45,49,66,0.02)" stroke="rgba(45,49,66,0.35)" stroke-width="1" stroke-dasharray="4 3"></rect>
+        <rect x="344" y="716" width="44" height="16" rx="2" fill="transparent" stroke="rgba(45,49,66,0.30)" stroke-width="0.8"></rect>
+        <text x="366" y="728" class="tag">HOOK</text>
+        <text x="480" y="740" class="node-name">How-To-Test Readiness</text>
+        <text x="480" y="756" class="node-sub">/speckit-document.analyze-how-to-test</text>
+        <text x="480" y="768" class="node-sub">adds E2E/API/screenshot tasks</text>
+
+        <!-- Implement -->
+        <rect x="328" y="836" width="304" height="84" rx="6" fill="#f5f5f5"></rect>
+        <rect x="328" y="836" width="304" height="84" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"></rect>
+        <rect x="344" y="848" width="44" height="16" rx="2" fill="transparent" stroke="rgba(45,49,66,0.40)" stroke-width="0.8"></rect>
+        <text x="366" y="860" class="tag">CORE</text>
+        <text x="480" y="872" class="node-name">/speckit.implement</text>
+        <text x="480" y="888" class="node-sub">build tasks story-by-story</text>
+        <text x="480" y="900" class="node-sub">validate checkpoints</text>
+
+        <!-- Handoff -->
+        <rect x="304" y="964" width="352" height="72" rx="36" fill="#f5f5f5"></rect>
+        <rect x="304" y="964" width="352" height="72" rx="36" fill="rgba(235,108,54,0.08)" stroke="#eb6c36" stroke-width="1.2"></rect>
+        <text x="480" y="992" class="node-name">Review Handoff</text>
+        <text x="480" y="1008" class="node-sub">how-to-test docs + PR details</text>
+        <text x="480" y="1020" class="node-sub">manual /speckit-pr-review after comments</text>
+
+        <!-- Legend -->
+        <line x1="48" y1="1072" x2="912" y2="1072" stroke="rgba(45,49,66,0.12)" stroke-width="0.8"></line>
+        <text x="48" y="1092" class="legend-text">LEGEND</text>
+
+        <rect x="128" y="1080" width="28" height="16" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"></rect>
+        <text x="168" y="1092" class="legend-text">CORE COMMAND</text>
+
+        <rect x="312" y="1080" width="28" height="16" rx="4" fill="rgba(45,49,66,0.02)" stroke="rgba(45,49,66,0.35)" stroke-width="1" stroke-dasharray="4 3"></rect>
+        <text x="352" y="1092" class="legend-text">OPTIONAL CHECK / HOOK</text>
+
+        <rect x="588" y="1080" width="28" height="16" rx="8" fill="rgba(235,108,54,0.08)" stroke="#eb6c36" stroke-width="1"></rect>
+        <text x="628" y="1092" class="legend-text">REVIEW / HANDOFF</text>
+      </svg>
+    </div>
+
+    <footer>
+      Sources in this repo: .specify/templates, specs/001-marketplace-web-app, and extensions/README.md.
+    </footer>
+  </main>
+</body>
+</html>

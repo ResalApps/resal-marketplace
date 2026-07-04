@@ -4,3 +4,4 @@ dist/
 # Spec Kit dev-mode generated extension artifacts
 **/.specify-dev/
 .codegraph/daemon.pid
+**/.specify/
